@@ -25,10 +25,8 @@ const usersPut = (req, res = response) => {
 
 const usersPost = async(req, res = response) => {
 
-    
-
-    const { name, email_address, password } = req.body;
-    const user = new User({ name, email_address });
+    const { name, email_address, password, role } = req.body;
+    const user = new User({ name, email_address, role });
 
     // Verificar si correo existe
     const mailExists = await User.findOne({ email_address });
