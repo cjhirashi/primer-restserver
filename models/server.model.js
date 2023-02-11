@@ -1,6 +1,6 @@
-const express = require('express');
-const cors = require('cors');
-const { dbConnetion } = require('../database/config.db');
+const express = require('express'); // Servidor de express
+const cors = require('cors'); // Conexión a milwares
+const { mongoConection } = require('../database/mongo.db'); // Conexión a base de datos
 
 class Server {
 
@@ -19,18 +19,18 @@ class Server {
     }
 
     async dataBase() {
-        await dbConnetion();
+        await mongoConection();
     }
 
     middlewares() {
         // CORS
-        this.app.use( cors() );
+        this.app.use( cors() ); // Uso de milwares
 
         // Lectura y parseo del body
-        this.app.use( express.json() );
+        this.app.use( express.json() ); // Uso de archivos JSON
 
         // Directorio público
-        this.app.use( express.static('public') );
+        this.app.use( express.static('public') ); // Uso de rutas publicas
     }
 
     routes() {

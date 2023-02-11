@@ -11,17 +11,28 @@ const isValidRole = async( role = '' ) => {
 
 }
 
-const existEmail = async( email_address = '' ) => {
+const existEmail = async( email = '' ) => {
 
-    const mailExists = await User.findOne({ email_address });
+    const mailExist = await User.findOne({ email });
 
-    if ( mailExists ) {
-        throw Error(`Correo ${email_address} ya existe`);
+    if ( mailExist ) {
+        throw Error(`Correo ${email} ya existe`);
+    }
+
+}
+
+const existUserById = async( id ) => {
+
+    const userExist = await User.findById( id );
+
+    if ( !userExist ) {
+        throw Error(`El usuario <${id}> no existe...`);
     }
 
 }
 
 module.exports = {
     isValidRole,
-    existEmail
+    existEmail,
+    existUserById
 }

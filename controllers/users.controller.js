@@ -3,30 +3,54 @@ const bcryptjs = require('bcryptjs');
 
 const User =  require('../models/user.model');
 
+// OBTENERA USUARIOS
+const usersGet = async (req = request, res = response) => {
 
-const usersGet = (req = request, res = response) => {
+    const { limit = 5, from = 0 } = req.query;
+    const query = {state: true};
 
-    const params = req.query;
+    //const users = await User.find(query)
+    //    .skip(Number(from))
+    //    .limit(Number(limit));
+
+    //const total = await User.countDocuments(query);
+
+    const [ total, users ] = await Promise.all([
+        User.countDocuments(query),
+        User.find(query)
+        .skip(Number(from))
+        .limit(Number(limit))
+    ]);
 
     res.json({
-        msg: 'get API - Controller'
+        total,
+        users
     });
 }
 
-const usersPut = (req, res = response) => {
+// ACTUALIZAR USUARIOS
+const usersPut = async (req, res = response) => {
 
     const { id } = req.params;
+    const { _id, password, google, email, ...resto } = req.body;
+
+    if ( password ) {
+        const salt = bcryptjs.genSaltSync();
+        resto.password = bcryptjs.hashSync( password, salt );
+    }
+
+    const user = await User.findByIdAndUpdate( id, resto );
 
     res.json({
-        msg: 'put API - Controller',
-        id
+        msg: `Usuario <${user.email}> actualizado`
     });
 }
 
+// AGREGAR USUARIOS
 const usersPost = async(req, res = response) => {
 
-    const { name, email_address, password, role } = req.body;
-    const user = new User({ name, email_address, role });
+    const { name, email, password, role } = req.body;
+    const user = new User({ name, email, role });
 
     // Encriptar contraseña
     const salt = bcryptjs.genSaltSync();
@@ -47,9 +71,18 @@ const usersPatch = (req, res = response) => {
     });
 }
 
-const usersDelete = (req, res = response) => {
+const usersDelete = async (req, res = response) => {
+
+    const { id } = req.params;
+
+    // Borrado de la base de datos
+    //const user = await User.findByIdAndDelete( id );
+
+    // Borrardo de las consultas
+    const user = await User.findByIdAndUpdate( id, { state: false })
+
     res.json({
-        msg: 'delete API - Controller'
+        user
     });
 }
 
