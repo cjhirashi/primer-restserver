@@ -22,8 +22,11 @@ const usersGet = async (req = request, res = response) => {
         .limit(Number(limit))
     ]);
 
+    const rango = `Registro ${from} a ${Number(from) - 1 + Number(limit)}`;
+
     res.json({
         total,
+        rango,
         users
     });
 }
@@ -79,7 +82,9 @@ const usersDelete = async (req, res = response) => {
     //const user = await User.findByIdAndDelete( id );
 
     // Borrardo de las consultas
-    const user = await User.findByIdAndUpdate( id, { state: false })
+    const user = await User.findByIdAndUpdate( id, { state: false });
+
+    const authenticatedUser = req.user;
 
     res.json({
         user
