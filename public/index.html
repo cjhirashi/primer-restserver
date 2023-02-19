@@ -9,5 +9,68 @@
 <body>
     <h1>Atom Controles</h1>
     <h2>API Proyectos</h2>
+    <h1></h1>
+    <h3>Google Sign-in</h3>
+    <hr>
+
+    <div id="g_id_onload"
+        data-client_id="1088485789087-7v13qdldmn4koq6trr73uomon8vk38a9.apps.googleusercontent.com"
+        data-auto_prompt="false"
+        data-callback="handleCredentialResponse">
+    </div>
+    <div class="g_id_signin"
+        data-type="standard"
+        data-size="large"
+        data-theme="outline"
+        data-text="sign_in_with"
+        data-shape="rectangular"
+        data-logo_alignment="left">
+    </div>
+
+    <button id="google_signout">
+        Sign-Out
+    </button>
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <script>
+        function handleCredentialResponse(response) {
+
+            // Google Token ( ID_TOKEN )
+            // console.log('id_token',response.credential);
+
+            const body = { id_token: response.credential }
+
+            fetch( 'http://localhost:8080/api/auth/google', {
+                method: 'POST',
+                headers: {
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify(body)
+            })
+                .then( resp => resp.json() )
+                .then( resp => {
+                    console.log(resp);
+                    localStorage.setItem( 'email', resp.user.email );
+                })
+                .catch( console.warn );
+        }
+
+        const button = document.getElementById('google_signout');
+        button.onclick = () => {
+
+            console.log( google.accounts.id );
+
+            google.accounts.id.disableAutoSelect();
+
+            google.accounts.id.revoke( localStorage.getItem( 'email' ), done => {
+                localStorage.clear();
+                location.reload();
+            })
+
+        }
+
+    </script>
+
 </body>
 </html>
