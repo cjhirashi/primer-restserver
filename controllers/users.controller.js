@@ -6,21 +6,22 @@ const User =  require('../models/user.model');
 // OBTENERA USUARIOS
 const usersGet = async (req = request, res = response) => {
 
+    // Consultas
     const { limit = 5, from = 0 } = req.query;
     const query = {state: true};
 
-    //const users = await User.find(query)
-    //    .skip(Number(from))
-    //    .limit(Number(limit));
-
-    //const total = await User.countDocuments(query);
-
-    const [ total, users ] = await Promise.all([
-        User.countDocuments(query),
-        User.find(query)
+    const total = await User.countDocuments(query);
+    const users = await User.find(query)
         .skip(Number(from))
-        .limit(Number(limit))
-    ]);
+        .limit(Number(limit));
+
+
+    //const [ total, users ] = await Promise.all([
+    //    User.countDocuments(query),
+    //    User.find(query)
+    //    .skip(Number(from))
+    //    .limit(Number(limit))
+    //]);
 
     const rango = `Registro ${from} a ${Number(from) - 1 + Number(limit)}`;
 
@@ -30,11 +31,29 @@ const usersGet = async (req = request, res = response) => {
         users
     });
 }
+const userGet =async (req = request, res = response) => {
+    // Parametros
+    const { id } = req.params;
+
+    // Buscar registro por ID
+    const user = await User.findById(id);
+
+    // Validar autentificación de usuario
+    const authenticatedUser = req.user;
+
+    res.json({
+        user
+    });
+
+}
 
 // ACTUALIZAR USUARIOS
 const usersPut = async (req, res = response) => {
 
+    // Parametros
     const { id } = req.params;
+
+    // Cuerpo
     const { _id, password, google, email, ...resto } = req.body;
 
     if ( password ) {
@@ -93,6 +112,7 @@ const usersDelete = async (req, res = response) => {
 
 module.exports = {
     usersGet,
+    userGet,
     usersPut,
     usersPost,
     usersPatch,

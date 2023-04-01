@@ -17,6 +17,7 @@ const {
 
 const {
     usersGet,
+    userGet,
     usersPut,
     usersPost,
     usersPatch,
@@ -25,7 +26,14 @@ const {
 
 const router = Router();
 
+//Consulta de datos
+//____Todos los registros
 router.get('/', usersGet );
+router.get('/:id',[
+    check('id', 'No es un Id válido'),
+    validarCampos
+],userGet);
+
 
 router.put('/:id', [
     check('id', 'No es un Id válido').isMongoId(),
