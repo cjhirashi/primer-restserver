@@ -2,36 +2,35 @@ const { response, request  } = require('express');
 const bcryptjs = require('bcryptjs');
 
 const User =  require('../models/user.model');
+const {
+    objectQuery,
+    replyMessageGetObjects,
+    replyMessageGetObject
+} = require('../helpers/object-response.helper');
 
 // OBTENERA USUARIOS
 const usersGet = async (req = request, res = response) => {
 
-    // Consultas
-    const { limit = 5, from = 0 } = req.query;
-    const query = {state: true};
+    // Parametros para consulta
+    const { limit = 5, from = 1 } = req.query;
 
+    const fromQuery = objectQuery(from);
+
+    // Consulta de registros
+    const query = {state: true};
     const total = await User.countDocuments(query);
     const users = await User.find(query)
-        .skip(Number(from))
+        .skip(Number(fromQuery))
         .limit(Number(limit));
 
+    const response = replyMessageGetObjects(total,from,limit,users);
 
-    //const [ total, users ] = await Promise.all([
-    //    User.countDocuments(query),
-    //    User.find(query)
-    //    .skip(Number(from))
-    //    .limit(Number(limit))
-    //]);
-
-    const rango = `Registro ${from} a ${Number(from) - 1 + Number(limit)}`;
-
-    res.json({
-        total,
-        rango,
-        users
+    res.status(response.status).json({
+        response
     });
 }
-const userGet =async (req = request, res = response) => {
+
+const userGet = async (req = request, res = response) => {
     // Parametros
     const { id } = req.params;
 
@@ -41,8 +40,22 @@ const userGet =async (req = request, res = response) => {
     // Validar autentificación de usuario
     const authenticatedUser = req.user;
 
-    res.json({
-        user
+    console.log(authenticatedUser);
+
+    const response = replyMessageGetObject(user);
+
+    res.status(response.status).json({
+        response
+    });
+
+}
+
+const userGetEmail = async (req = request, res = response) => {
+    console.log('Estoy aqui');
+    
+
+    res.status(response.status).json({
+        msg:'holaaaa'
     });
 
 }
@@ -113,6 +126,7 @@ const usersDelete = async (req, res = response) => {
 module.exports = {
     usersGet,
     userGet,
+    userGetEmail,
     usersPut,
     usersPost,
     usersPatch,

@@ -18,6 +18,7 @@ const {
 const {
     usersGet,
     userGet,
+    userGetEmail,
     usersPut,
     usersPost,
     usersPatch,
@@ -33,7 +34,6 @@ router.get('/:id',[
     check('id', 'No es un Id válido'),
     validarCampos
 ],userGet);
-
 
 router.put('/:id', [
     check('id', 'No es un Id válido').isMongoId(),
