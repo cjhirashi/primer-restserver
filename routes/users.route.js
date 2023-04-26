@@ -13,12 +13,11 @@ const {
     isValidRole,
     existEmail,
     existUserById
-} = require('../helpers/db-validators');
+} = require('../helpers/custom-validators.helpers');
 
 const {
     usersGet,
     userGet,
-    userGetEmail,
     usersPut,
     usersPost,
     usersPatch,
@@ -27,14 +26,17 @@ const {
 
 const router = Router();
 
-//Consulta de datos
-//____Todos los registros
+//Ruto de consulta de Usuarios
+//Ruta lista de Usuarios
 router.get('/', usersGet );
+
+//Ruta Usuario por Id
 router.get('/:id',[
     check('id', 'No es un Id válido'),
     validarCampos
 ],userGet);
 
+//Ruta actualización de Usuarios
 router.put('/:id', [
     check('id', 'No es un Id válido').isMongoId(),
     check('id').custom( existUserById ),

@@ -1,87 +1,106 @@
+//========================================================
+//TITLE: USER CONTROLLER
+//DESCRIPTION: CONTROLADOR DE REGISTRO USUARIOS
+//AUTH: Carlos Jimenez @cjhirashi
+//========================================================
+
+//LIBRERIAS
 const { response, request  } = require('express');
 const bcryptjs = require('bcryptjs');
-
 const User =  require('../models/user.model');
 const {
-    objectQuery,
+    objectFrom,
+    objectLimit,
     replyMessageGetObjects,
-    replyMessageGetObject
-} = require('../helpers/object-response.helper');
+    replyMessageGetObject,
+    replyMessagePutObject
+} = require('../helpers/object.helpers');
 
-// OBTENERA USUARIOS
+//OBTENER LISTA DE USUARIOS
 const usersGet = async (req = request, res = response) => {
+    //Consulta de parametros
+    const { limit = 5, from = 1, role = '' } = req.query;
 
-    // Parametros para consulta
-    const { limit = 5, from = 1 } = req.query;
+    //Adecuación de parametros
+    const fromQuery = objectFrom(from);
+    const limitQuery = objectLimit(limit);
 
-    const fromQuery = objectQuery(from);
-
-    // Consulta de registros
-    const query = {state: true};
+    //Consulta de registros
+    //Parametros de consulta
+    let query;
+    if (role == '') {
+        query = {state: true};
+    }else{
+        query = {
+            state: true,
+            role
+        };
+    }
+    //Total de registros que cumplen con consulta
     const total = await User.countDocuments(query);
+    //Lista de registros que cumplen con consulta
     const users = await User.find(query)
         .skip(Number(fromQuery))
-        .limit(Number(limit));
+        .limit(Number(limitQuery));
 
-    const response = replyMessageGetObjects(total,from,limit,users);
+    //Gestor de mensaje de respuesta
+    const response = replyMessageGetObjects(total,from,limitQuery,users);
 
+    //Respuesta de sistema
     res.status(response.status).json({
         response
     });
 }
 
+//OBTENER USUARIO
 const userGet = async (req = request, res = response) => {
-    // Parametros
+    //Consulta de parametros
     const { id } = req.params;
 
-    // Buscar registro por ID
+    //Busqueda de registro por ID
     const user = await User.findById(id);
 
-    // Validar autentificación de usuario
+    //Validar autentificación de usuario
     const authenticatedUser = req.user;
 
-    console.log(authenticatedUser);
-
+    //Gestor de mensaje de respuesta
     const response = replyMessageGetObject(user);
 
+    //Respuesta de sistema
     res.status(response.status).json({
         response
     });
 
 }
 
-const userGetEmail = async (req = request, res = response) => {
-    console.log('Estoy aqui');
-    
-
-    res.status(response.status).json({
-        msg:'holaaaa'
-    });
-
-}
-
-// ACTUALIZAR USUARIOS
+//ACTUALIZAR USUARIO
 const usersPut = async (req, res = response) => {
-
-    // Parametros
+    //Consulta de parametros
     const { id } = req.params;
+    //Consulta de cuerpo de la petición
+    //const { uid, password, google, email, ...resto } = req.body;
+    let { name, password, img, role } = req.body;
 
-    // Cuerpo
-    const { _id, password, google, email, ...resto } = req.body;
-
+    //Encriptacion de password
     if ( password ) {
         const salt = bcryptjs.genSaltSync();
-        resto.password = bcryptjs.hashSync( password, salt );
+        password = bcryptjs.hashSync( password, salt );
     }
 
-    const user = await User.findByIdAndUpdate( id, resto );
+    //const data = {name, password, img, role};
 
-    res.json({
-        msg: `Usuario <${user.email}> actualizado`
+    const user = await User.findByIdAndUpdate( id, {name, password, img, role} );
+
+    //Gestor de mensaje de respuesta
+    const response = replyMessagePutObject(user);
+
+    //Respuesta de sistema
+    res.status(response.status).json({
+        response
     });
 }
 
-// AGREGAR USUARIOS
+//CREAR USUARIO
 const usersPost = async(req, res = response) => {
 
     const { name, email, password, role } = req.body;
@@ -126,7 +145,6 @@ const usersDelete = async (req, res = response) => {
 module.exports = {
     usersGet,
     userGet,
-    userGetEmail,
     usersPut,
     usersPost,
     usersPatch,

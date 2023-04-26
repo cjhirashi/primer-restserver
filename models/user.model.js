@@ -19,7 +19,7 @@ const UserSchema = Schema({
     },
     role: {
         type: String,
-        enum: ['SUPER_USER', 'ADMIN_ROLE', 'USER_ROLE', 'VIWER_ROLE'],
+        //enum: ['SUPER_USER', 'ADMIN_ROLE', 'USER_ROLE', 'VIWER_ROLE'],
         default: 'VIWER_ROLE'
     },
     state: {

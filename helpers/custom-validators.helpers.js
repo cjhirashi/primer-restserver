@@ -1,3 +1,10 @@
+//========================================================
+//TITLE: CUSTOM VALIDATORS HELPERS
+//DESCRIPTION: VALIDADORES DE DATOS PERSONALES
+//AUTH: Carlos Jimenez @cjhirashi
+//========================================================
+
+//BIBLIOTECAS
 const Role = require('../models/role.model');
 const User = require('../models/user.model');
 
@@ -5,6 +12,7 @@ const User = require('../models/user.model');
 const isValidRole = async( role = '' ) => {
 
     const roleExist = await Role.findOne({ role });
+    
     if ( !roleExist ) {
         throw new Error(`El role ${ role } es invalido`);
     }
