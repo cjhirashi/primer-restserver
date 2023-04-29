@@ -14,7 +14,7 @@ const isValidRole = async( role = '' ) => {
     const roleExist = await Role.findOne({ role });
     
     if ( !roleExist ) {
-        throw new Error(`El role ${ role } es invalido`);
+        throw new Error(`[${ role }] invalido`);
     }
 
 }
@@ -24,7 +24,7 @@ const existEmail = async( email = '' ) => {
     const mailExist = await User.findOne({ email });
 
     if ( mailExist ) {
-        throw Error(`Correo ${email} ya existe`);
+        throw Error(`[${email}] ya existe`);
     }
 
 }
@@ -35,7 +35,7 @@ const existUserById = async( id ) => {
 
     if ( !userExist ) {
 
-        throw Error(`El usuario <${id}> no existe...`);
+        throw Error(`Usuario [${id}] no existe...`);
 
     }
 

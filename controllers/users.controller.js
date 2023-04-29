@@ -61,7 +61,7 @@ const userGet = async (req = request, res = response) => {
     const user = await User.findById(id);
 
     //Validar autentificación de usuario
-    const authenticatedUser = req.user;
+    //const authenticatedUser = req.user;
 
     //Gestor de mensaje de respuesta
     const response = replyMessageGetObject(user);
@@ -77,6 +77,7 @@ const userGet = async (req = request, res = response) => {
 const usersPut = async (req, res = response) => {
     //Consulta de parametros
     const { id } = req.params;
+
     //Consulta de cuerpo de la petición
     //const { uid, password, google, email, ...resto } = req.body;
     let { name, password, img, role } = req.body;
@@ -133,12 +134,13 @@ const usersDelete = async (req, res = response) => {
     //const user = await User.findByIdAndDelete( id );
 
     // Borrardo de las consultas
-    const user = await User.findByIdAndUpdate( id, { state: false });
+   // const user = await User.findByIdAndUpdate( id, { state: false });
 
-    const authenticatedUser = req.user;
+    //Validar autentificación de usuario
+    //const authenticatedUser = req.user;
 
     res.json({
-        user
+        msg: 'Ok'
     });
 }
 
