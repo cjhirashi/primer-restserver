@@ -18,15 +18,16 @@ const {
 
 //OBTENER LISTA DE USUARIOS
 const usersGet = async (req = request, res = response) => {
-    //Consulta de parametros
+    //CONSULTA DE PARAMETROS
     const { limit = 5, from = 1, role = '' } = req.query;
+    const userActiv = req.user;
 
-    //Adecuación de parametros
+    //ADECUACION DE PARAMETROS
     const fromQuery = objectFrom(from);
     const limitQuery = objectLimit(limit);
 
-    //Consulta de registros
-    //Parametros de consulta
+    //CONSULTA DE REGISTROS
+    //PARAMETROS DE CONSULTAS
     let query;
     if (role == '') {
         query = {state: true};
@@ -48,6 +49,7 @@ const usersGet = async (req = request, res = response) => {
 
     //Respuesta de sistema
     res.status(response.status).json({
+        user: userActiv.email,
         response
     });
 }

@@ -9,11 +9,12 @@ const validateJWT = async( req = request, res = response, next ) => {
 
     const token = req.header('x-tk');
 
+    //NO HAY TOKEN
     if ( !token ) {
         response = messageStructure(
             status = 401,
-            msEn = 'Dont have access to the app...',
-            msEs = 'No tiene acceso a la aplicación...',
+            msEn = 'Wrong token...',
+            msEs = 'Token invalido...',
         );
         return res.status(response.status).json({
             response

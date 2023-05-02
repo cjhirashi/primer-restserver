@@ -28,7 +28,10 @@ const router = Router();
 
 //Ruto de consulta de Usuarios
 //Ruta lista de Usuarios
-router.get('/', usersGet );
+router.get('/', [
+    validateJWT,
+    validateFields
+],usersGet );
 
 //Ruta Usuario por Id
 router.get('/:id',[

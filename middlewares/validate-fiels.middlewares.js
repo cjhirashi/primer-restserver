@@ -8,6 +8,26 @@
 const { validationResult } = require('express-validator');
 const { messageStructure } = require('../helpers/object.helpers');
 
+const isValidationPassword = ( req, res, next ) => {
+
+    const { password, vpassword } = req.body;
+
+    if ( password !== vpassword ) {
+
+        const response = messageStructure(
+            status = 400,
+            msEn = 'Password dont match...',
+            msEs = 'El password no coincide...',
+        );
+        return res.status(response.status).json({
+            response
+        });
+    }
+
+    next();
+
+}
+
 //Validador de campos en consultas
 const validateFields = ( req, res, next ) => {
 
@@ -36,5 +56,6 @@ const validateFields = ( req, res, next ) => {
 
 //Módulo de exportación de funciones
 module.exports = {
+    isValidationPassword,
     validateFields
 }

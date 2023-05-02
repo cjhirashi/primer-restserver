@@ -23,6 +23,8 @@ const objectLimit = (limit = 1)=>{
 
     if ( limit < 1 ) {
         response = 1;
+    }else{
+        response = limit
     }
 
     return response;
