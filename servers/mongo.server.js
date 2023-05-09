@@ -22,14 +22,16 @@ class Server {
 
         //RUTAS PARA CONSULTA DE REGISTROS
         this.apiV = '/api';
-        this.usersPath = `${this.apiV}/users`;
-        this.authPath = `${this.apiV}/auth`;
-        this.productsPath = `${this.apiV}/products`;
-        this.projectsPath = `${this.apiV}/projects`;
-        this.systemsPath = `${this.apiV}/systems`;
-        this.subsystemsPath = `${this.apiV}/subsystems`;
-        this.elementsPath = `${this.apiV}/elements`;
-        this.variablesPath = `${this.apiV}/variables`;
+        this.paths = {
+            auth: `${this.apiV}/auth`,
+            users: `${this.apiV}/users`,
+            products: `${this.apiV}/products`,
+            projects: `${this.apiV}/projects`,
+            systems: `${this.apiV}/systems`,
+            subsystems: `${this.apiV}/subsystems`,
+            elements: `${this.apiV}/elements`,
+            variables: `${this.apiV}/variables`
+        }
 
         //INICIO DE CONEXION A BASE DE DATOS
         this.dataBase();
@@ -64,8 +66,9 @@ class Server {
     //CONEXION A RUTAS DE ACCESO PARA CONSULTASS
     routes() {
 
-        this.app.use(this.authPath, require('../routes/auth.route'));
-        this.app.use(this.usersPath, require('../routes/users.route'));
+        this.app.use(this.paths.auth, require('../routes/auth.routes'));
+        this.app.use(this.paths.users, require('../routes/users.routes'));
+        this.app.use(this.paths.variables, require('../routes/variables.routes'));
 
     }
 
