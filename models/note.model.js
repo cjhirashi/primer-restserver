@@ -7,8 +7,7 @@ const NoteSchema = Schema({
         required: true
     },
     user: {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
+        type: String,
         //required: true
     }
 
@@ -22,10 +21,10 @@ NoteSchema.methods.toJSON = function() {
     return note;
 }
 
-const note = model( 'Note', NoteSchema );
+const Note = model( 'Note', NoteSchema );
 
 //Exportación de módulos
 module.exports = {
-    note,
+    Note,
     NoteSchema
 }

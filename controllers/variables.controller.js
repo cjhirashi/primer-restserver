@@ -39,13 +39,19 @@ const variablePut = async (req, res = response) => {
 //CREAR VARIABLE
 const variablePost = async(req, res = response) => {
     const { name, description, variableType, dataType, note } = req.body;
-    console.log('Hola');
+
     const notes = [];
 
     if (note) {
-        
-        notes.push({ note });
-    
+        if (note.user) {
+            
+            notes.push({ note, user: 'Carlos'});
+
+        }else{
+
+            notes.push({ note, user: 'Carlos' });
+
+        }
     }
     const state = true;
 
