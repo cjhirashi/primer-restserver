@@ -1,6 +1,6 @@
 //===============================================================================================================
 //TITLE: AUTH ROUTER
-//DESCRIPTION: RUTAS DE CONTROLES DE ACCESO
+//DESCRIPTION: RUTAS DE CONTROLES DE ACCESO PARA AUTENTIFICACION
 //AUTH: Carlos Jimenez @cjhirashi
 //===============================================================================================================
 
@@ -10,8 +10,7 @@ const { check } = require('express-validator');
 
 //LIBRERIAS LOCALES
 const { logIn, logOn, googleSignIn } = require('../controllers/auth.controller');
-const { isValidationPassword, validateFields } = require('../middlewares/validate-fiels.middlewares');
-const { existEmail } = require('../helpers/custom-validators.helpers');
+const { isValidName, isValidPassword, isValidEmail, isNotPassword, isNotGoogleToken } = require('../middlewares/validate-fiels.middlewares');
 
 //_______________________________________________________________________________________________________________
 //ROUTER
@@ -19,26 +18,22 @@ const router = Router();
 
 //_______________________________________________________________________________________________________________
 //CONSULTAS (POST)
-//LOG-IN NORMAL
-router.post('/login', [
-    check('email', 'El correo es invalido').isEmail(),
-    check('password', 'La contraseña es obligatoria').not().isEmpty(),
-    validateFields
-], logIn);
-
+//REGISTRO DE USUARIO POR CORREO
 router.post('/logon', [
-    check('name', 'El nombre es obligatorio').not().isEmpty(),
-    check('password', 'El password debe contener almenos 6 caracteres').isLength({ min: 6 }),
-    check('email', 'El correo es invalido').isEmail(),
-    check('email').custom( existEmail ),
-    isValidationPassword,
-    validateFields
+    isValidName,
+    isValidEmail,
+    isValidPassword,
 ], logOn);
 
-//LOG-IN GOOGLE
+//INICIO DE SESION POR CORREO
+router.post('/login', [
+    isValidEmail,
+    isNotPassword
+], logIn);
+
+//INICIO DE SESION POR GOOGLE
 router.post('/google', [
-    check('id_token', 'id_token es necesario').not().isEmpty(),
-    validateFields
+    isNotGoogleToken
 ], googleSignIn);
 
 //_______________________________________________________________________________________________________________

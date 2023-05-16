@@ -30,7 +30,8 @@ class Server {
             systems: `${this.apiV}/systems`,
             subsystems: `${this.apiV}/subsystems`,
             elements: `${this.apiV}/elements`,
-            variables: `${this.apiV}/variables`
+            variables: `${this.apiV}/variables`,
+            search: `${this.apiV}/search`
         }
 
         //INICIO DE CONEXION A BASE DE DATOS
