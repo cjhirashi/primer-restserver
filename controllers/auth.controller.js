@@ -12,13 +12,15 @@ const bcryptjs = require('bcryptjs');
 const User = require('../models/user.model');
 const { generateJWT } = require('../helpers/generate-jwt');
 const { googleVerify } = require('../helpers/google-verify');
-const { messageStructure } = require('../helpers/object.helpers');
 const { messageError, messageObject, messageToken } = require('../helpers/messege.helpers');
+
 
 //_______________________________________________________________________________________________________________
 //LOGIN POR EMAIL
 const logIn = async( req, res = response ) => {
+    
     let response;
+    
     //CONSULTA DE PARAMETROS
     const { email, password } = req.body;
 
@@ -29,7 +31,7 @@ const logIn = async( req, res = response ) => {
         //USUARIO NO EXISTE
         if (!user) {
             response = messageError(
-                400,
+                404,
                 'Username dont register...',
                 'Usuario no registrado...'
             );
@@ -41,7 +43,7 @@ const logIn = async( req, res = response ) => {
         //USURIO INACTIVO
         if (user.state == false ) {
             response = messageError(
-                400,
+                401,
                 'Username inactive...',
                 'Usuario inactivo...'
             );
@@ -53,7 +55,7 @@ const logIn = async( req, res = response ) => {
         //USUARIO ACTIVO CON CUENTA DE GOOGLE
         if (user.google == true) {
             response = messageError(
-                400,
+                401,
                 'Username register on google...',
                 'Usuario registrado en google...'
             );
@@ -68,7 +70,7 @@ const logIn = async( req, res = response ) => {
         //PASSWORD NO VALIDO
         if ( !validPassword ) {
             response = messageError(
-                400,
+                401,
                 'Wrong password...',
                 'Password incorrecto...'
             );
@@ -81,7 +83,7 @@ const logIn = async( req, res = response ) => {
         const token = await generateJWT( user.id );
 
         response = messageToken(
-            200,
+            202,
             'Successful login...',
             'Acceso exitoso...',
             token
@@ -91,7 +93,7 @@ const logIn = async( req, res = response ) => {
         })
     } catch (error) {
         const response = messageError(
-            400,
+            500,
             'Server error...',
             'Error de servidor...'
         );
@@ -105,7 +107,9 @@ const logIn = async( req, res = response ) => {
 //_______________________________________________________________________________________________________________
 //LOGON POR EMAIL
 const logOn = async(req, res = response) => {
+    //let response;
 
+    //CONSULTA DE PARAMETROS
     const { name, email, password } = req.body;
 
     const userExist = await User.findOne({email});
@@ -132,7 +136,7 @@ const logOn = async(req, res = response) => {
     await user.save();
 
     const response = messageObject(
-        200,
+        201,
         'User created successfully...',
         'Usuario creado exitosamente...',
         user
