@@ -1,5 +1,14 @@
+//===============================================================================================================
+//TITLE: USER MODEL
+//DESCRIPTION: MODELO DE DATOS DE USUARIOS
+//AUTH: Carlos Jimenez @cjhirashi
+//===============================================================================================================
+
+//LIBRERIAS GLOBALES
 const { Schema, model } = require('mongoose');
 
+//_______________________________________________________________________________________________________________
+//ESQUEMA DE REGISTO
 const UserSchema = Schema({
     name: {
         type: String,
@@ -19,7 +28,6 @@ const UserSchema = Schema({
     },
     role: {
         type: String,
-        //enum: ['SUPER_USER', 'ADMIN_ROLE', 'USER_ROLE', 'VIWER_ROLE'],
         default: 'VIWER_ROLE'
     },
     state: {
@@ -32,10 +40,14 @@ const UserSchema = Schema({
     }
 });
 
+//_______________________________________________________________________________________________________________
+//TRANSFORMACION DE RESPUESTA DE REGISTRO
 UserSchema.methods.toJSON = function() {
     const { __v, password, _id, ...user } = this.toObject();
     user.uid = _id;
     return user;
 }
 
+//_______________________________________________________________________________________________________________
+//EXPORTACION DE MODULOS DE CONTROL
 module.exports = model( 'User', UserSchema );

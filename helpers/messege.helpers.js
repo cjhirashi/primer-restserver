@@ -117,6 +117,73 @@ const messageToken = ( code, english, spanish, token) => {
     );
 }
 
+const msgObjects = ( objects, total, from, limit ) => {
+    let vCode;
+    let vEnglish;
+    let vSpanish;
+    let vEnglishErr;
+    let vSpanishErr;
+    let vObjects;
+    let vTotal;
+    let vFrom;
+    let vLimit;
+
+    if ( total > 1 ) {
+
+        vCode = 200;
+        vEnglish = `${total} objets found...`;
+        vSpanish = `${total} objetos encontrados...`;
+        vEnglishErr = null;
+        vSpanishErr = null;
+        vObjects = objects;
+        vTotal = total;
+        vFrom = from;
+        vLimit = limit;
+        
+    }else{
+
+        if( total == 1 ){
+        
+            vCode = 200;
+            vEnglish = `${total} objet found...`;
+            vSpanish = `${total} objeto encontrado...`;
+            vEnglishErr = null;
+            vSpanishErr = null;
+            vObjects = objects;
+            vTotal = total;
+            vFrom = from;
+            vLimit = limit;
+        
+        }else{
+        
+            vCode = 404;
+            vEnglish = null;
+            vSpanish = null;
+            vEnglishErr = 'Objects not found...';
+            vSpanishErr = 'Objetos no encontrados...';
+            vObjects = null;
+            vTotal = null;
+            vFrom = null;
+            vLimit = null;
+
+        }
+
+    }
+
+    return messageStructure(
+        vCode,
+        vEnglish,
+        vSpanish,
+        vEnglishErr,
+        vSpanishErr,
+        null,
+        vObjects,
+        vTotal,
+        vFrom,
+        vLimit
+    );
+}
+
 //_______________________________________________________________________________________________________________
 //EXPORTACION DE MODULOS DE CONTROL
 module.exports = {
@@ -124,5 +191,6 @@ module.exports = {
     messageError,
     messageObject,
     messageObjects,
-    messageToken
+    messageToken,
+    msgObjects
 }

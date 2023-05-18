@@ -1,6 +1,6 @@
 //===============================================================================================================
 //TITLE: AUTH CONTROLLER
-//DESCRIPTION: CONTROLADOR DE INICIO DE SESION
+//DESCRIPTION: CONTROLADOR DE AUTENTIFICACION DE USUARIO
 //AUTH: Carlos Jimenez @cjhirashi
 //===============================================================================================================
 
@@ -18,9 +18,7 @@ const { messageError, messageObject, messageToken } = require('../helpers/messeg
 //_______________________________________________________________________________________________________________
 //LOGIN POR EMAIL
 const logIn = async( req, res = response ) => {
-    
-    let response;
-    
+
     //CONSULTA DE PARAMETROS
     const { email, password } = req.body;
 
@@ -30,7 +28,7 @@ const logIn = async( req, res = response ) => {
         
         //USUARIO NO EXISTE
         if (!user) {
-            response = messageError(
+            const response = messageError(
                 404,
                 'Username dont register...',
                 'Usuario no registrado...'
@@ -40,9 +38,9 @@ const logIn = async( req, res = response ) => {
             });
         }
 
-        //USURIO INACTIVO
+        //USURIO ESTADO INACTIVO
         if (user.state == false ) {
-            response = messageError(
+            const response = messageError(
                 401,
                 'Username inactive...',
                 'Usuario inactivo...'
@@ -54,7 +52,7 @@ const logIn = async( req, res = response ) => {
 
         //USUARIO ACTIVO CON CUENTA DE GOOGLE
         if (user.google == true) {
-            response = messageError(
+            const response = messageError(
                 401,
                 'Username register on google...',
                 'Usuario registrado en google...'
@@ -67,9 +65,9 @@ const logIn = async( req, res = response ) => {
         //VERIFICACION DE PASSWORD
         const validPassword = bcryptjs.compareSync( password, user.password );
 
-        //PASSWORD NO VALIDO
+        //PASSWORD NO COINCIDE
         if ( !validPassword ) {
-            response = messageError(
+            const response = messageError(
                 401,
                 'Wrong password...',
                 'Password incorrecto...'
@@ -79,10 +77,11 @@ const logIn = async( req, res = response ) => {
             });
         }
 
-        //GENERACION DE PASSWORD
+        //GENERACION DE TOKEN PARA USUARIO
         const token = await generateJWT( user.id );
 
-        response = messageToken(
+        //RESPUESTA DE ACCESO EXITOSO
+        const response = messageToken(
             202,
             'Successful login...',
             'Acceso exitoso...',
@@ -92,6 +91,7 @@ const logIn = async( req, res = response ) => {
             response
         })
     } catch (error) {
+        //ERROR DE SERVIDOR
         const response = messageError(
             500,
             'Server error...',
@@ -107,11 +107,12 @@ const logIn = async( req, res = response ) => {
 //_______________________________________________________________________________________________________________
 //LOGON POR EMAIL
 const logOn = async(req, res = response) => {
-    //let response;
 
     //CONSULTA DE PARAMETROS
     const { name, email, password } = req.body;
+    const role = 'VIEWER_ROLE';
 
+    //VALIDACION SI USUARIO YA EXISTE
     const userExist = await User.findOne({email});
 
     if ( userExist ) {
@@ -125,16 +126,17 @@ const logOn = async(req, res = response) => {
         })
     }
 
-    const role = 'VIEWER_ROLE';
+    //CREACION DE USUARIO EN EL SERVIDOR
     const user = new User({ name, email, role });
 
-    //ENCRIPTAR CONTRASEÑA
+    //ENCRIPTACION DE CONTRASEÑA
     const salt = bcryptjs.genSaltSync();
     user.password = bcryptjs.hashSync( password, salt );
 
-    //CREAR USUARIO EN BASE DE DATOS
+    //GUARDAR USUARIO EN LA BASE DE DATOS
     await user.save();
 
+    //MENSAJE DE CREACION DE USUARIO
     const response = messageObject(
         201,
         'User created successfully...',
@@ -150,6 +152,7 @@ const logOn = async(req, res = response) => {
 //LOGIN POR GOOGLE
 const googleSignIn = async( req, res = response ) => {
 
+    //CONSULTA DE PARAMETROS
     const { id_token } = req.body;
 
     try {

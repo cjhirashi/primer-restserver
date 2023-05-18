@@ -23,6 +23,7 @@ class Server {
         //RUTAS PARA CONSULTA DE REGISTROS
         this.apiV = '/api';
         this.paths = {
+            role: `${this.apiV}/roles`,
             auth: `${this.apiV}/auth`,
             users: `${this.apiV}/users`,
             products: `${this.apiV}/products`,
@@ -67,6 +68,7 @@ class Server {
     //CONEXION A RUTAS DE ACCESO PARA CONSULTASS
     routes() {
 
+        this.app.use(this.paths.role, require('../routes/roles.routes'));
         this.app.use(this.paths.auth, require('../routes/auth.routes'));
         this.app.use(this.paths.users, require('../routes/users.routes'));
         this.app.use(this.paths.variables, require('../routes/variables.routes'));
