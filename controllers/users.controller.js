@@ -11,13 +11,19 @@ const User =  require('../models/user.model');
 const {
     objectFrom,
     objectLimit,
-    replyMessageGetObjects,
-    replyMessageGetObject,
-    replyMessagePutObject
 } = require('../helpers/object.helpers');
+const { 
+    msgObjects, 
+    msgObject, 
+    msgObjectUpdate, 
+    msgObjectCreate,
+    msgObjectDeleted
+} = require('../helpers/messege.helpers');
 
-//OBTENER LISTA DE USUARIOS
-const usersGet = async (req = request, res = response) => {
+//_______________________________________________________________________________________________________________
+//ENLISTAR LOS REGISTROS
+const listUsers = async (req = request, res = response) => {
+
     //CONSULTA DE PARAMETROS
     const { limit = 5, from = 1, role = '' } = req.query;
     const userActiv = req.user;
@@ -26,131 +32,121 @@ const usersGet = async (req = request, res = response) => {
     const fromQuery = objectFrom(from);
     const limitQuery = objectLimit(limit);
 
-    //CONSULTA DE REGISTROS
-    //PARAMETROS DE CONSULTAS
-    let query;
-    if (role == '') {
-        query = {state: true};
-    }else{
-        query = {
-            state: true,
-            role
-        };
-    }
-    //Total de registros que cumplen con consulta
-    const total = await User.countDocuments(query);
-    //Lista de registros que cumplen con consulta
-    const users = await User.find(query)
+    //TOTAL DE REGISTROS ENCONTRADOS
+    const total = await User.countDocuments({state: true});
+    //LISTA DE REGISTROS
+    const users = await User.find({state:true})
         .skip(Number(fromQuery))
         .limit(Number(limitQuery));
 
     //Gestor de mensaje de respuesta
-    const response = replyMessageGetObjects(total,from,limitQuery,users);
+    const response = msgObjects(
+        users,
+        total,
+        from,
+        limit
+        );
 
     //Respuesta de sistema
-    res.status(response.status).json({
-        user: userActiv.email,
-        response
-    });
+    res.status(response.status).json(response);
 }
 
-//OBTENER USUARIO
+//LEER REGISTRO POR ID
 const userGet = async (req = request, res = response) => {
-    //Consulta de parametros
+    console.log('HHHOOOLLLAAA');
+    //CONSULTA DE PARAMETROS
     const { id } = req.params;
 
-    //Busqueda de registro por ID
+    //BUSCAR REGISTRO POR ID
     const user = await User.findById(id);
 
-    //Validar autentificación de usuario
-    //const authenticatedUser = req.user;
-
     //Gestor de mensaje de respuesta
-    const response = replyMessageGetObject(user);
+    const response = msgObject(user);
 
     //Respuesta de sistema
-    res.status(response.status).json({
-        response
-    });
+    res.status(response.status).json(response);
 
 }
 
-//ACTUALIZAR USUARIO
-const usersPut = async (req, res = response) => {
-    //Consulta de parametros
+//ACTUALIZAR REGISTRO POR ID
+const updateUser = async (req, res = response) => {
+
+    //CONSULTA DE PARAMETROS
     const { id } = req.params;
+    let { name, password, img } = req.body;
 
-    //Consulta de cuerpo de la petición
-    //const { uid, password, google, email, ...resto } = req.body;
-    let { name, password, img, role } = req.body;
-
-    //Encriptacion de password
+    //ENCRIPTACION DE PASSWORD
     if ( password ) {
         const salt = bcryptjs.genSaltSync();
         password = bcryptjs.hashSync( password, salt );
     }
 
-    //const data = {name, password, img, role};
-
-    const user = await User.findByIdAndUpdate( id, {name, password, img, role} );
+    //ACTUALIZACION DE USUARIO
+    await User.findByIdAndUpdate( id, {name, password, img} );
+    const user = await User.findById( id );
 
     //Gestor de mensaje de respuesta
-    const response = replyMessagePutObject(user);
+    const response = msgObjectUpdate(user);
 
     //Respuesta de sistema
-    res.status(response.status).json({
-        response
-    });
+    res.status(response.status).json(response);
 }
 
-//CREAR USUARIO
-const usersPost = async(req, res = response) => {
+//CREAR REGISTRO POR ID
+const createUser = async(req, res = response) => {
 
-    const { name, email, password, role } = req.body;
-    const user = new User({ name, email, role });
+    //CONSULTA DE PARAMETROS
+    const { name, email, password } = req.body;
 
-    // Encriptar contraseña
+    //CREACION DE USUARIO
+    const user = new User({ name, email });
+    
+    //ENCRIPTACION DE PASSWORD
     const salt = bcryptjs.genSaltSync();
     user.password = bcryptjs.hashSync( password, salt );
-
-    // Crear usuario en BD
+    
+    //CARGAR USUARIO A BASE DE DATOS
     await user.save();
 
-    res.json({
-        user
+    //RESPUESTA DE CREACION DE USUARIO
+    const response = msgObjectCreate( user );
 
-    });
+    res.status(response.status).json(response);
 }
 
-const usersPatch = (req, res = response) => {
-    res.json({
-        msg: 'patch API - Controller'
-    });
-}
+//DESACTIVAR REGISTRO POR ID
+const inactiveUser = async (req, res = response) => {
 
-const usersDelete = async (req, res = response) => {
-
+    //CONSULTA DE PARAMETROS
     const { id } = req.params;
 
-    // Borrado de la base de datos
-    //const user = await User.findByIdAndDelete( id );
+    //DESACTIVAR REGISTRO
+    const user = await User.findByIdAndUpdate( id, { state: false });
 
-    // Borrardo de las consultas
-   // const user = await User.findByIdAndUpdate( id, { state: false });
+    const response = msgObjectDeleted( user );
 
-    //Validar autentificación de usuario
-    //const authenticatedUser = req.user;
+    res.status(response.status).json(response);
+}
 
-    res.json({
-        msg: 'Ok'
-    });
+//ELIMINAR REGISTRO POR ID
+const deleteUser = async (req, res = response) => {
+
+    //CONSULTA DE PARAMETROS
+    const { id } = req.params;
+
+    //DESACTIVAR REGISTRO
+    const user = await User.findByIdAndDelete( id );
+
+    const response = msgObjectDeleted( user );
+
+    res.status(response.status).json(response);
 }
 
 module.exports = {
-    usersGet,
+    listUsers,
     userGet,
-    usersPut,
-    usersPost,
-    usersPatch,
-    usersDelete
+    updateUser,
+    createUser,
+    inactiveUser,
+    deleteUser
 };

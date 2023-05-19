@@ -15,7 +15,8 @@ const {
     isValidPassword, 
     isValidEmail, 
     isNotPassword, 
-    isNotGoogleToken 
+    isNotGoogleToken, 
+    isPasswordMatch
 } = require('../middlewares/validate-fiels.middlewares');
 
 //_______________________________________________________________________________________________________________
@@ -29,6 +30,7 @@ router.post('/logon', [
     isValidName,
     isValidEmail,
     isValidPassword,
+    isPasswordMatch
 ], logOn);
 
 //INICIO DE SESION POR CORREO

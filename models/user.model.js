@@ -12,23 +12,23 @@ const { Schema, model } = require('mongoose');
 const UserSchema = Schema({
     name: {
         type: String,
-        required: [true, 'El nombre es obligatorio']
+        required: true,
     },
     email: {
         type: String,
-        required: [true, 'El correo es obligatorio'],
+        required: true,
         unique: true
     },
     password: {
         type: String,
-        required: [true, 'La contraseña es requerida']
+        required: true
     },
     img: {
         type: String
     },
     role: {
         type: String,
-        default: 'VIWER_ROLE'
+        default: 'UNDEFINED'
     },
     state: {
         type: Boolean,
@@ -38,12 +38,14 @@ const UserSchema = Schema({
         type: Boolean,
         default: false
     }
+},{
+    timestamps: true
 });
 
 //_______________________________________________________________________________________________________________
 //TRANSFORMACION DE RESPUESTA DE REGISTRO
 UserSchema.methods.toJSON = function() {
-    const { __v, password, _id, ...user } = this.toObject();
+    const { __v, password, _id, state, google, ...user } = this.toObject();
     user.uid = _id;
     return user;
 }

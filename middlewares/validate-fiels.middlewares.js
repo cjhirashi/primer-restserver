@@ -90,7 +90,7 @@ const isValidEmail = ( req, res, next ) => {
 //VALIDACION DE PASSWORD
 const isValidPassword = ( req, res, next ) => {
 
-    const { password, vpassword } = req.body;
+    const { password } = req.body;
 
     if ( !password ) {
         return res.status(400).json({
@@ -113,6 +113,15 @@ const isValidPassword = ( req, res, next ) => {
             )
         });
     }
+
+    next();
+
+}
+
+//COMPARACION DE PASSWORD
+const isPasswordMatch = ( req, res, next ) => {
+
+    const { password, vpassword } = req.body;
 
     if ( password !== vpassword ) {
         return res.status(400).json({
@@ -194,6 +203,7 @@ module.exports = {
     isValidName,
     isValidEmail,
     isValidPassword,
+    isPasswordMatch,
     isNotPassword,
     validateFields,
     isNotGoogleToken

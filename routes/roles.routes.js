@@ -8,11 +8,17 @@
 const { Router } = require('express');
 
 //LIBRERIAS LOCALES
-const { logIn, logOn, googleSignIn } = require('../controllers/auth.controller');
 const { 
     isValidName, 
 } = require('../middlewares/validate-fiels.middlewares');
-const { listRoles, createRole, inactiveRole, deleteRole } = require('../controllers/roles.controller');
+const { 
+    listRoles, 
+    createRole, 
+    updateRole, 
+    inactiveRole, 
+    deleteRole 
+} = require('../controllers/roles.controller');
+const { validateJWT } = require('../middlewares');
 
 //_______________________________________________________________________________________________________________
 //ROUTER
@@ -22,22 +28,27 @@ const router = Router();
 //CONSULTAS WEB
 //CONSULTA DE REGISTROS
 router.get('/', [
-    
+    validateJWT
 ], listRoles);
 
 //CREACION DE REGISTRO
 router.post('/', [
-
+    validateJWT
 ], createRole);
+
+//ACTUALIZACION DE REGISTRO
+router.put('/:id',[
+    validateJWT
+], updateRole);
 
 //DESACTIVACION DE REGISTRO
 router.delete('/:id', [
-
+    validateJWT
 ], inactiveRole);
 
 //ELIMINACION DE REGISTRO
 router.delete('/:id/delete', [
-
+    validateJWT
 ], deleteRole);
 
 //_______________________________________________________________________________________________________________

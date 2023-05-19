@@ -9,7 +9,7 @@ const { response } = require('express');
 
 //LIBRERIAS LOCALES
 const { Role } = require('../models/index');
-const { messageError, messageObject, messageToken, messageObjects, messageSuccess, msgObjects } = require('../helpers/messege.helpers');
+const { messageError, messageObject, messageToken, messageObjects, messageSuccess, msgObjects, msgObjectUpdate } = require('../helpers/messege.helpers');
 const {
     objectFrom,
     objectLimit
@@ -49,17 +49,18 @@ const listRoles = async( req, res = response ) => {
 
 }
 
-//CREAR NUEBO REGISTRO
+//CREAR NUEVO REGISTRO
 const createRole = async(req, res = response) => {
     let response;
 
     //CONSULTA DE PARAMETROS
     const { role, description } = req.body;
+    const user = req.user;
 
     //VALIDACION SI ROL YA EXISTE
     const roleExist = await Role.findOne({role});
 
-    if ( roleExist ) {
+    if ( roleExist && roleExist.state == true ) {
         //MENSAJE DE QUE ROL EXISTE
         response = messageError(
             400,
@@ -68,7 +69,7 @@ const createRole = async(req, res = response) => {
         );
     }else{
         //CREACION DE ROL DE USUARIO
-        const newRole = new Role( { role, description, state: true } );
+        const newRole = new Role( { role, description, user: user.email, state: true } );
         await newRole.save();
 
         response = messageSuccess(
@@ -82,6 +83,25 @@ const createRole = async(req, res = response) => {
 
 }
 
+//ACTUALIZAR REGISTRO
+const updateRole = async(req, res = response) => {
+    let response;
+
+    //CONSULTA DE PARAMETROS
+    const { id } = req.params;
+    const { description } = req.body;
+    const user = req.user;
+
+    //ACTUALIZACION DE PARAMETROS
+    await Role.findByIdAndUpdate( id, {description, user: user.email} );
+    const roleUpdate = await Role.findById( id );
+    
+    response = msgObjectUpdate(roleUpdate);
+
+    res.status(response.status).json(response);
+
+}
+
 //INACTIVAR REGISTRO POR ID
 const inactiveRole = async(req, res = response) => {
     let response;
@@ -89,16 +109,18 @@ const inactiveRole = async(req, res = response) => {
     //CONSULTA DE PARAMETROS
     const { id } = req.params;
 
-    await Role.findByIdAndUpdate( id, { state: false });
-    const role = await Role.findById( id );
+    //DESACTIVACION DE REGISTRO
+    const role = await Role.findByIdAndUpdate( id, { state: false });
 
     if ( !role ) {
-        response = messageSuccess(
+        //RESPUESTA REGISTO NO EXISTE
+        response = messageError(
             400,
             'Role not exist...',
             'El rol no existe...'
         );
     }else{
+        //RESPUESTA REGISTRO DESACTIVADO
         response = messageSuccess(
             200,
             'Role eliminated...',
@@ -106,7 +128,6 @@ const inactiveRole = async(req, res = response) => {
         );
     }
 
-  
     res.status(response.status).json(response);
 
 }
@@ -118,17 +139,18 @@ const deleteRole = async(req, res = response) => {
     //CONSULTA DE PARAMETROS
     const { id } = req.params;
 
-    const roleExist = await Role.findById(id);
+    //ELIMINACION DE REGISTRO
+    const roleExist = await Role.findByIdAndDelete( id );
 
     if ( !roleExist ) {
+        //RESPUESTA REGISTO NO EXISTE
         response = messageSuccess(
             400,
             'Role not exist...',
             'El rol no existe...'
         );
     }else{
-        await Role.findByIdAndDelete( id );
-    
+        //RESPUESTA REGISTRO ELIMINADO
         response = messageSuccess(
             200,
             'Role eliminated...',
@@ -145,6 +167,7 @@ const deleteRole = async(req, res = response) => {
 module.exports = {
     listRoles,
     createRole,
+    updateRole,
     inactiveRole,
     deleteRole
 }

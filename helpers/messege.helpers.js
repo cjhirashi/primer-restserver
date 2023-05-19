@@ -101,6 +101,7 @@ const messageObjects = ( code, english, spanish, objects, total, from, limit ) =
     );
 }
 
+//RESPUESTA TOKEN
 const messageToken = ( code, english, spanish, token) => {
     return messageStructure(
         code,
@@ -184,6 +185,158 @@ const msgObjects = ( objects, total, from, limit ) => {
     );
 }
 
+const msgObject = ( object ) => {
+    let vCode;
+    let vEnglish;
+    let vSpanish;
+    let vEnglishErr;
+    let vSpanishErr;
+    let vObject;
+
+    if ( !object ) {
+
+        vCode = 404;
+        vEnglish = null;
+        vSpanish = null;
+        vEnglishErr = 'Object not found...';
+        vSpanishErr = 'Objeto no encontrado...';
+        vObject = object;
+        
+    }else{
+
+        vCode = 200;
+        vEnglish = 'Object found...';
+        vSpanish = 'Objeto encontrado...';
+        vEnglishErr = null;
+        vSpanishErr = null;
+        vObject = object;
+
+    }
+
+    return messageStructure(
+        vCode,
+        vEnglish,
+        vSpanish,
+        vEnglishErr,
+        vSpanishErr,
+        vObject,
+    );
+}
+
+const msgObjectUpdate = ( object ) => {
+    let vCode;
+    let vEnglish;
+    let vSpanish;
+    let vEnglishErr;
+    let vSpanishErr;
+    let vObject;
+
+    if ( !object ) {
+
+        vCode = 404;
+        vEnglish = null;
+        vSpanish = null;
+        vEnglishErr = 'Object not found...';
+        vSpanishErr = 'Objeto no encontrado...';
+        vObject = object;
+        
+    }else{
+
+        vCode = 200;
+        vEnglish = 'Object updated...';
+        vSpanish = 'Objeto actualizado...';
+        vEnglishErr = null;
+        vSpanishErr = null;
+        vObject = object;
+
+    }
+
+    return messageStructure(
+        vCode,
+        vEnglish,
+        vSpanish,
+        vEnglishErr,
+        vSpanishErr,
+        vObject,
+    );
+}
+
+const msgObjectCreate = ( object ) => {
+    let vCode;
+    let vEnglish;
+    let vSpanish;
+    let vEnglishErr;
+    let vSpanishErr;
+    let vObject;
+
+    if ( !object ) {
+
+        vCode = 404;
+        vEnglish = null;
+        vSpanish = null;
+        vEnglishErr = 'Object not created...';
+        vSpanishErr = 'Objeto no creado...';
+        vObject = object;
+        
+    }else{
+
+        vCode = 201;
+        vEnglish = 'Object created...';
+        vSpanish = 'Objeto creado...';
+        vEnglishErr = null;
+        vSpanishErr = null;
+        vObject = object;
+
+    }
+
+    return messageStructure(
+        vCode,
+        vEnglish,
+        vSpanish,
+        vEnglishErr,
+        vSpanishErr,
+        vObject,
+    );
+}
+
+const msgObjectDeleted = ( object ) => {
+    let vCode;
+    let vEnglish;
+    let vSpanish;
+    let vEnglishErr;
+    let vSpanishErr;
+    let vObject;
+
+    if ( !object ) {
+
+        vCode = 404;
+        vEnglish = null;
+        vSpanish = null;
+        vEnglishErr = 'Object not found...';
+        vSpanishErr = 'Objeto no encontrado...';
+        vObject = null;
+        
+    }else{
+
+        vCode = 201;
+        vEnglish = 'Object deleted...';
+        vSpanish = 'Objeto eliminado...';
+        vEnglishErr = null;
+        vSpanishErr = null;
+        vObject = null;
+
+    }
+
+    return messageStructure(
+        vCode,
+        vEnglish,
+        vSpanish,
+        vEnglishErr,
+        vSpanishErr,
+        vObject,
+    );
+}
+
 //_______________________________________________________________________________________________________________
 //EXPORTACION DE MODULOS DE CONTROL
 module.exports = {
@@ -192,5 +345,9 @@ module.exports = {
     messageObject,
     messageObjects,
     messageToken,
-    msgObjects
+    msgObjects,
+    msgObject,
+    msgObjectUpdate,
+    msgObjectCreate,
+    msgObjectDeleted
 }

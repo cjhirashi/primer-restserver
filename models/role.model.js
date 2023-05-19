@@ -15,11 +15,15 @@ const RoleSchema = Schema({
         required: true
     },
     description: {
-        type: String,
+        type: String
+    },
+    user: {
+        type: String
     },
     state: {
         type: Boolean,
-        required: true
+        required: true,
+        default: true
     }
 },{
     timestamps: true
@@ -28,7 +32,7 @@ const RoleSchema = Schema({
 //_______________________________________________________________________________________________________________
 //TRANSFORMACION DE RESPUESTA DE REGISTRO
 RoleSchema.methods.toJSON = function() {
-    const { __v, _id, ...role } = this.toObject();
+    const { __v, _id, state, ...role } = this.toObject();
     role.uid = _id;
     return role;
 }

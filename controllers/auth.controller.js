@@ -12,7 +12,7 @@ const bcryptjs = require('bcryptjs');
 const User = require('../models/user.model');
 const { generateJWT } = require('../helpers/generate-jwt');
 const { googleVerify } = require('../helpers/google-verify');
-const { messageError, messageObject, messageToken } = require('../helpers/messege.helpers');
+const { messageError, messageObject, messageToken, msgObjectCreate } = require('../helpers/messege.helpers');
 
 
 //_______________________________________________________________________________________________________________
@@ -110,7 +110,7 @@ const logOn = async(req, res = response) => {
 
     //CONSULTA DE PARAMETROS
     const { name, email, password } = req.body;
-    const role = 'VIEWER_ROLE';
+    //const role = 'VIEWER_ROLE';
 
     //VALIDACION SI USUARIO YA EXISTE
     const userExist = await User.findOne({email});
@@ -127,7 +127,7 @@ const logOn = async(req, res = response) => {
     }
 
     //CREACION DE USUARIO EN EL SERVIDOR
-    const user = new User({ name, email, role });
+    const user = new User({ name, email });
 
     //ENCRIPTACION DE CONTRASEÑA
     const salt = bcryptjs.genSaltSync();
@@ -137,15 +137,9 @@ const logOn = async(req, res = response) => {
     await user.save();
 
     //MENSAJE DE CREACION DE USUARIO
-    const response = messageObject(
-        201,
-        'User created successfully...',
-        'Usuario creado exitosamente...',
-        user
-    );
-    return res.status(response.status).json({
-        response
-    });
+    const response = msgObjectCreate( user );
+
+    return res.status(response.status).json(response);
 }
 
 //_______________________________________________________________________________________________________________
