@@ -6,7 +6,8 @@
 
 //LIBRERIAS GLOBALES
 const { Router } = require('express');
-const { variablesGet, variablePost, variableNota } = require('../controllers/variables.controller');
+const { variablesGet, createVariable, variableNota } = require('../controllers/variables.controller');
+const { validateJWT } = require('../middlewares');
 
 //LIBRERIAS LOCALES
 
@@ -20,7 +21,9 @@ const router = Router();
 router.get('/', variablesGet);
 
 //CREAR REGISTRO
-router.post('/', variablePost);
+router.post('/', [
+    validateJWT
+], createVariable);
 
 //ELIMINAR REGISTRO POR ID
 router.delete('/delete/:id', (req, res) => {

@@ -1,18 +1,21 @@
-//========================================================
-//TITLE: USER CONTROLLER
-//DESCRIPTION: CONTROLADOR DE REGISTRO USUARIOS
+//===============================================================================================================
+//TITLE: VARIABLES CONTROLLER
+//DESCRIPTION: CONTROLADOR DE GESTOR DE DATOS DE ROL DE USUARIOS
 //AUTH: Carlos Jimenez @cjhirashi
-//========================================================
+//===============================================================================================================
 
 //LIBRERIAS GLOBALES
 const { response, request } = require('express');
-const bcryptjs = require('bcryptjs');
 
 //LIBRERIAS LOCALES
-const { Variable } =  require('../models');
+
+const { msgObjectCreate, messageError, msgObjectExist } = require('../helpers/messege.helpers');
+const { findOne } = require('../models/variable.model');
+const { Variable } = require('../models');
 
 
-//OBTENER LISTA DE VARIABLES
+//_______________________________________________________________________________________________________________
+//ENLISTAR LOS REGISTROS
 const variablesGet = async (req = request, res = response) => {
     const variables = await Variable.find({state: true})
         .skip(Number(0))
@@ -37,33 +40,37 @@ const variablePut = async (req, res = response) => {
 }
 
 //CREAR VARIABLE
-const variablePost = async(req, res = response) => {
-    const { name, description, variableType, dataType, note } = req.body;
+const createVariable = async(req, res = response) => {
+    let response;
+
+    //CONSULTA DE PARAMETROS
+    const { name, description, variableType, dataType, signal, range, units, multistate, note } = req.body;
+    const user = req.user;
 
     const notes = [];
 
     if (note) {
-        if (note.user) {
             
-            notes.push({ note, user: 'Carlos'});
+        notes.push({ note, user: user.email});
 
-        }else{
-
-            notes.push({ note, user: 'Carlos' });
-
-        }
     }
-    const state = true;
 
-    const variable = new Variable({ name, description, variableType, dataType, state, notes });
+    const variableExist = await Variable.findOne({name});
+
+    if (variableExist) {
+        response = msgObjectExist();
+        return res.status(response.status).json(response);
+    }
+
+    const variable = new Variable({ name, description, variableType, dataType, signal, units, range:{max: range.max, min: range.min}, multistate, user: user.email , notes });
+    //variable.range.set('max', range.max);
+    //variable.range.set('min', range.min);
 
     await variable.save();
 
+    response = msgObjectCreate( variable );
 
-    res.status(200).json({
-        response: 'respuesta bien',
-        
-    });
+    res.status(response.status).json(response);
 }
 
 //AGREGAR NOTA POR ID
@@ -101,7 +108,7 @@ module.exports = {
     variablesGet,
     variableGet,
     variablePut,
-    variablePost,
+    createVariable,
     variableDelete,
     variableInactive,
     variableNota

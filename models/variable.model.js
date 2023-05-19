@@ -1,5 +1,6 @@
 const { Schema, model } = require('mongoose');
 const { NoteSchema } = require('./note.model');
+const { StateSchema } = require('./state.model');
 
 //Esquema de registro
 const VariableSchema = Schema({
@@ -14,29 +15,41 @@ const VariableSchema = Schema({
     },
     variableType: {
         type: String,
+        default: '---',
+        uppercase: true
     },
     dataType: {
         type: String,
+        default: '---',
+        uppercase: true
     },
     signal: {
         type: String,
+        default: '---',
+        uppercase: true
     },
     range: {
-        type: Map,
-        of: Number
+        max: {
+            type: Number
+        },
+        min: {
+            type: Number
+        }
     },
     units: {
-        type: String
+        type: String,
+        default: '---'
     },
-    multistateStatus: {
-        type: Map,
-        of: String
-    },
+    multistate: [StateSchema],
     configurationTime: {
         type: Number
     },
+    user: {
+        type: String
+    },
     state: {
-        type: Boolean
+        type: Boolean,
+        default: true
     },
     notes: [NoteSchema]
 

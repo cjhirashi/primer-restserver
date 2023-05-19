@@ -337,6 +337,16 @@ const msgObjectDeleted = ( object ) => {
     );
 }
 
+const msgObjectExist = () => {
+    return messageStructure(
+        400,
+        null,
+        null,
+        'Object already exist...',
+        'El objeto ya existe...',
+    );
+}
+
 //_______________________________________________________________________________________________________________
 //EXPORTACION DE MODULOS DE CONTROL
 module.exports = {
@@ -349,5 +359,6 @@ module.exports = {
     msgObject,
     msgObjectUpdate,
     msgObjectCreate,
-    msgObjectDeleted
+    msgObjectDeleted,
+    msgObjectExist
 }
