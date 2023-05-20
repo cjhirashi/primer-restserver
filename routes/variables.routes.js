@@ -1,52 +1,58 @@
 //===============================================================================================================
-//TITLE: VARIABLES ROUTES
-//DESCRIPTION: RUTAS PARA GESTION DE REGISTROS
+//TITLE: VARIABLES ROUTER
+//DESCRIPTION: RUTAS DE CONTROLES DE ACCESO PARA ROLES DE USUARIOS
 //AUTH: Carlos Jimenez @cjhirashi
 //===============================================================================================================
 
 //LIBRERIAS GLOBALES
 const { Router } = require('express');
-const { variablesGet, createVariable, variableNota } = require('../controllers/variables.controller');
-const { validateJWT } = require('../middlewares');
 
 //LIBRERIAS LOCALES
+const { 
+    validateJWT, 
+    isMongoId 
+} = require('../middlewares');
+const { 
+    listVariables, 
+    createVariable, 
+    updateVariable
+} = require('../controllers/variables.controller');
 
 
 //_______________________________________________________________________________________________________________
 //SERVIDOR DE RUTAS
 const router = Router();
 
-//Ruto de consulta de Usuarios
-//BUSCAR TODOS LOS REGISTROS
-router.get('/', variablesGet);
+//_______________________________________________________________________________________________________________
+//CONSULTAS WEB
+//CONSULTA DE REGISTROS
+router.get('/', [
+    validateJWT
+], listVariables);
 
-//CREAR REGISTRO
+//CREACION DE REGISTRO
 router.post('/', [
     validateJWT
 ], createVariable);
 
-//ELIMINAR REGISTRO POR ID
-router.delete('/delete/:id', (req, res) => {
-    res.json({response: 'eliminar registro por id'})
-});
-
-//AGREGAR NOTA POR ID
-router.put('/nota/:id', variableNota);
-
-//BUSCAR REGISTRO POR ID
-router.get('/:id', (req, res) => {
-    res.json({response: 'buscar registro por id'})
-});
-
-//ACTUALIZAR REGISTROS POR ID
-router.put('/:id', (req, res) => {
-    res.json({response: 'actualizar registro por id'})
-});
+//ACTUALIZAR REGISTRO POR ID
+router.put('/:id', [
+    validateJWT,
+    isMongoId
+], updateVariable);
 
 //DESACTIVAR REGISTRO POR ID
-router.delete('/:id',(req, res) => {
-    res.json({response: 'desactivar registro por id'})
-});
+router.delete('/:id', [
+    validateJWT,
+    isMongoId
+], updateVariable);
 
+//ELIMINAR REGISTRO POR ID
+router.delete('/:id/delete', [
+    validateJWT,
+    isMongoId
+], updateVariable);
 
+//_______________________________________________________________________________________________________________
+//EXPORTACION DE MODULOS DE CONTROL
 module.exports = router;

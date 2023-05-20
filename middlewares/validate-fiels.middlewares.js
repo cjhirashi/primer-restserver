@@ -9,8 +9,8 @@ const { validationResult } = require('express-validator');
 
 //LIBRERIAS LOCALES
 const { messageStructure } = require('../helpers/object.helpers');
-const { validarNombre, validarCorreo, validarPassword } = require('../helpers/expresionesRegulares.helpers');
-const User = require('../models/user.model');
+const { validarNombre, validarCorreo, validarPassword, validarMongoId } = require('../helpers/expresionesRegulares.helpers');
+const User = require('../models/global/user.model');
 const { messageError } = require('../helpers/messege.helpers');
 
 //_______________________________________________________________________________________________________________
@@ -82,6 +82,37 @@ const isValidEmail = ( req, res, next ) => {
                 'El email es incorrecto...'
             )
         });
+    }
+
+    next();
+}
+
+//VALIDACION DE ID MONGO
+const isMongoId = ( req, res, next ) => {
+    let response;
+
+    const { id } = req.params;
+
+    if ( !id ) {
+        response = messageError(
+            400,
+            'Register id is required...',
+            'id de registro es requerido...'
+        );
+
+        return res.status(response.status).json(response);
+    }
+
+    const valMongoId = validarMongoId(id);
+
+    if ( !valMongoId ) {
+        response = messageError(
+            400,
+            'id is not valid...',
+            'El id no es valido...'
+        );
+
+        return res.status(response.status).json(response);
     }
 
     next();
@@ -202,6 +233,7 @@ const isNotGoogleToken = ( req, res, next ) => {
 module.exports = {
     isValidName,
     isValidEmail,
+    isMongoId,
     isValidPassword,
     isPasswordMatch,
     isNotPassword,

@@ -8,38 +8,51 @@
 const { response, request } = require('express');
 
 //LIBRERIAS LOCALES
-
-const { msgObjectCreate, messageError, msgObjectExist } = require('../helpers/messege.helpers');
-const { findOne } = require('../models/variable.model');
 const { Variable } = require('../models');
-
+const { objectFrom, objectLimit } = require('../helpers/object.helpers');
+const { msgObjectCreate, msgObjectExist, msgErrorServidor, msgObjects, msgObjectUpdate } = require('../helpers/messege.helpers');
 
 //_______________________________________________________________________________________________________________
 //ENLISTAR LOS REGISTROS
-const variablesGet = async (req = request, res = response) => {
-    const variables = await Variable.find({state: true})
-        .skip(Number(0))
-        .limit(Number(10));
+const listVariables = async (req = request, res = response) => {
+    let response;
 
-        res.status(200).json({
-            response: 'respuesta bien',
-            variables
-            
-        });
+    //CONSULTA DE PARAMETROS
+    const { limit = 10, from = 1} = req.query;
+
+    //ADECUACION DE PARAMETROS
+    const fromQuery = objectFrom(from);
+    const limitQuery = objectLimit(limit);
+
+    try {
+        //TOTAL DE REGISTROS ENCONTRADOS
+        const total = await Variable.countDocuments({state: true});
+        
+        //LISTA DE REGISTROS
+        const variables = await Variable.find({state: true})
+            .skip(Number(fromQuery))
+            .limit(Number(limitQuery));
+    
+        //RESPUESTA DE GESTOR DE REGISTROS
+        response = msgObjects(
+            variables,
+            total,
+            from,
+            limit
+            );
+    
+        return res.status(response.status).json(response);
+
+    } catch (error) {
+        //ERROR DE SERVIDOR
+        response = msgErrorServidor();
+
+        return res.status(response.status).json(response);
+    }
 
 }
 
-//OBTENER VARIABLE
-const variableGet = async (req = request, res = response) => {
-
-}
-
-//ACTUALIZAR VARIABLE
-const variablePut = async (req, res = response) => {
-
-}
-
-//CREAR VARIABLE
+//CREAR NUEVO REGISTRO
 const createVariable = async(req, res = response) => {
     let response;
 
@@ -47,6 +60,7 @@ const createVariable = async(req, res = response) => {
     const { name, description, variableType, dataType, signal, range, units, multistate, note } = req.body;
     const user = req.user;
 
+    //AGREGAR NOTA A LISTA DE NOTAS
     const notes = [];
 
     if (note) {
@@ -55,61 +69,90 @@ const createVariable = async(req, res = response) => {
 
     }
 
-    const variableExist = await Variable.findOne({name});
+    try {
 
-    if (variableExist) {
-        response = msgObjectExist();
+        //VERIFICACION SI VARIABLE EXISTE
+        const variableExist = await Variable.findOne({name});
+    
+        if (variableExist) {
+            response = msgObjectExist();
+            return res.status(response.status).json(response);
+        }
+    
+        //CREACION DE VARIABLE NUEVA
+        const variable = new Variable({ name, description, variableType, dataType, signal, units, range, multistate, user: user.email , notes });
+    
+        //CARGA DE VARIABLE A BASE DE DATOS
+        await variable.save();
+    
+        //MENSAJE DE VALIDACION
+        response = msgObjectCreate( variable );
+    
+        return res.status(response.status).json(response);
+
+    } catch (error) {
+        //ERROR DE SERVIDOR
+        response = msgErrorServidor();
+
         return res.status(response.status).json(response);
     }
 
-    const variable = new Variable({ name, description, variableType, dataType, signal, units, range:{max: range.max, min: range.min}, multistate, user: user.email , notes });
-    //variable.range.set('max', range.max);
-    //variable.range.set('min', range.min);
-
-    await variable.save();
-
-    response = msgObjectCreate( variable );
-
-    res.status(response.status).json(response);
 }
 
-//AGREGAR NOTA POR ID
-const variableNota = async (req, res = response) => {
+//OBTENER VARIABLE
+const updateVariable = async (req = request, res = response) => {
+    let response;
+    let notes = [];
+
+    //CONSULTA DE PARAMETROS
+    const user = req.user;
     const { id } = req.params;
+    let { description, variableType, dataType, signal, range, units, multistate, note } = req.body;
 
-    const { note, item } = req.body;
+    try {
+        //VALIDACION DE EXISTENCIA DE REGISTRO
+        const variableExist = await Variable.findById( id );
+        
+        //GESTOR DE LISTA DE NOTAS EXISTENTES EN REGISTRO
+        if ( variableExist ) {
+            if ( note ) {
+                notes = variableExist.notes;
+                notes.push({ note, user: user.email});
+            }
+        }
+
+        //ACTUALIZACION DE REGISTROS
+        await Variable.findByIdAndUpdate( id, { description, variableType, dataType, signal, range, units, multistate, notes } );
+        const variable = await Variable.findById( id );
     
-    const variable = await Variable.findById(id);
-
-    if (item) {
-        variable.notes.splice(item,1);
-    }
+        //RESPUESTA DE VALIDACION
+        response = msgObjectUpdate(variable);
     
-    if (note) {
-        variable.notes.push({note});
+        return res.status(response.status).json(response);
+    } catch (error) {
+        //ERROR DE SERVIDOR
+        response = msgErrorServidor();
+
+        return res.status(response.status).json(response);
     }
-
-    await variable.save();
-
-    res.json({response: 'agregar nota por id'})
 }
 
-//ELIMINAR VARIABLE
-const variableDelete = async (req, res = response) => {
+//DESACTIVAR VARIABLE
+const inactiveVariable = async (req, res = response) => {
 
 }
 
 //DESACTIVAR VARIABLE
-const variableInactive = async (req, res = response) => {
+const deleteVariable = async (req, res = response) => {
 
 }
 
+//_______________________________________________________________________________________________________________
+//EXPORTACION DE MODULOS DE CONTROL
 module.exports = {
-    variablesGet,
-    variableGet,
-    variablePut,
+    listVariables,
     createVariable,
-    variableDelete,
-    variableInactive,
-    variableNota
+    updateVariable,
+    inactiveVariable,
+    deleteVariable
 };

@@ -1,13 +1,15 @@
-//========================================================
-//TITLE: USER CONTROLLER
-//DESCRIPTION: CONTROLADOR DE REGISTRO USUARIOS
+//===============================================================================================================
+//TITLE: VARIABLES CONTROLLER
+//DESCRIPTION: CONTROLADOR DE GESTOR DE DATOS DE ROL DE USUARIOS
 //AUTH: Carlos Jimenez @cjhirashi
-//========================================================
+//===============================================================================================================
 
-//LIBRERIAS
+//LIBRERIAS GLOBALES
 const { response, request  } = require('express');
 const bcryptjs = require('bcryptjs');
-const User =  require('../models/user.model');
+
+//LIBRERIAS LOCALES
+const { User } = require('../models');
 const {
     objectFrom,
     objectLimit,
@@ -17,38 +19,45 @@ const {
     msgObject, 
     msgObjectUpdate, 
     msgObjectCreate,
-    msgObjectDeleted
+    msgObjectDeleted,
+    msgErrorServidor
 } = require('../helpers/messege.helpers');
 
 //_______________________________________________________________________________________________________________
 //ENLISTAR LOS REGISTROS
 const listUsers = async (req = request, res = response) => {
+    let response;
 
     //CONSULTA DE PARAMETROS
-    const { limit = 5, from = 1, role = '' } = req.query;
-    const userActiv = req.user;
+    const { limit = 5, from = 1} = req.query;
 
     //ADECUACION DE PARAMETROS
     const fromQuery = objectFrom(from);
     const limitQuery = objectLimit(limit);
 
-    //TOTAL DE REGISTROS ENCONTRADOS
-    const total = await User.countDocuments({state: true});
-    //LISTA DE REGISTROS
-    const users = await User.find({state:true})
-        .skip(Number(fromQuery))
-        .limit(Number(limitQuery));
+    try {
+        //TOTAL DE REGISTROS ENCONTRADOS
+        const total = await User.countDocuments({state: true});
+    
+        //LISTA DE REGISTROS
+        const users = await User.find({state:true})
+            .skip(Number(fromQuery))
+            .limit(Number(limitQuery));
+    
+        //RESPUESTA DE GESTOR DE REGISTROS
+        response = msgObjects(
+            users,
+            total,
+            from,
+            limit
+            );
+    
+        return res.status(response.status).json(response);
+    } catch (error) {
+        response = msgErrorServidor();
 
-    //Gestor de mensaje de respuesta
-    const response = msgObjects(
-        users,
-        total,
-        from,
-        limit
-        );
-
-    //Respuesta de sistema
-    res.status(response.status).json(response);
+        return res.status(response.status).json(response);
+    }
 }
 
 //LEER REGISTRO POR ID
@@ -70,26 +79,33 @@ const userGet = async (req = request, res = response) => {
 
 //ACTUALIZAR REGISTRO POR ID
 const updateUser = async (req, res = response) => {
+    let response;
 
     //CONSULTA DE PARAMETROS
     const { id } = req.params;
     let { name, password, img } = req.body;
 
-    //ENCRIPTACION DE PASSWORD
-    if ( password ) {
-        const salt = bcryptjs.genSaltSync();
-        password = bcryptjs.hashSync( password, salt );
+    try {
+        //ENCRIPTACION DE PASSWORD
+        if ( password ) {
+            const salt = bcryptjs.genSaltSync();
+            password = bcryptjs.hashSync( password, salt );
+        }
+    
+        //ACTUALIZACION DE USUARIO
+        await User.findByIdAndUpdate( id, {name, password, img} );
+        const user = await User.findById( id );
+    
+        //RESPUESTA DE CONSULTA
+        response = msgObjectUpdate(user);
+    
+        return res.status(response.status).json(response);
+    } catch (error) {
+        //ERROR DE SERVIDOR
+        response = msgErrorServidor;
+
+        return res.status(response.status).json(response);
     }
-
-    //ACTUALIZACION DE USUARIO
-    await User.findByIdAndUpdate( id, {name, password, img} );
-    const user = await User.findById( id );
-
-    //Gestor de mensaje de respuesta
-    const response = msgObjectUpdate(user);
-
-    //Respuesta de sistema
-    res.status(response.status).json(response);
 }
 
 //CREAR REGISTRO POR ID

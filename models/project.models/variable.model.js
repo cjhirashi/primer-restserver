@@ -1,6 +1,5 @@
 const { Schema, model } = require('mongoose');
-const { NoteSchema } = require('./note.model');
-const { StateSchema } = require('./state.model');
+const { NoteSchema } = require('../global/note.model');
 
 //Esquema de registro
 const VariableSchema = Schema({
@@ -40,7 +39,24 @@ const VariableSchema = Schema({
         type: String,
         default: '---'
     },
-    multistate: [StateSchema],
+    multistate: {
+        0: {type: String, uppercase: true},
+        1: {type: String, uppercase: true},
+        2: {type: String, uppercase: true},
+        3: {type: String, uppercase: true},
+        4: {type: String, uppercase: true},
+        5: {type: String, uppercase: true},
+        6: {type: String, uppercase: true},
+        7: {type: String, uppercase: true},
+        8: {type: String, uppercase: true},
+        9: {type: String, uppercase: true},
+        10: {type: String, uppercase: true},
+        11: {type: String, uppercase: true},
+        12: {type: String, uppercase: true},
+        13: {type: String, uppercase: true},
+        14: {type: String, uppercase: true},
+        15: {type: String, uppercase: true},
+    },
     configurationTime: {
         type: Number
     },
@@ -62,5 +78,11 @@ VariableSchema.methods.toJSON = function() {
     variable.uid = _id;
     return variable;
 }
+
+const Variable = model( 'Variable', VariableSchema );
+
 //Exportación de módulos
-module.exports = model( 'Variable', VariableSchema );
+module.exports = {
+    Variable,
+    VariableSchema
+};

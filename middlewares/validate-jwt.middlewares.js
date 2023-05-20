@@ -9,7 +9,7 @@ const { request } = require('express');
 const jwt = require('jsonwebtoken');
 
 //LIBRERIAS LOCALES
-const User = require('../models/user.model');
+const User = require('../models/global/user.model');
 const { messageStructure } = require('../helpers/object.helpers');
 const { messageError } = require('../helpers/messege.helpers');
 

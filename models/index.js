@@ -1,13 +1,15 @@
 
 
-const User = require('./user.model');
-const Role = require('./role.model');
-const Note = require('./note.model');
-const Variable = require('./variable.model');
+//IMPORTACIONES: CARPETA GLOBALES
+const User = require('./global/user.model');
+const Role = require('./global/role.model');
+
+//IMPORTACIONES: CARPETA PROYECTOS
+const { Variable } = require('./project.models/variable.model');
+
 
 module.exports = {
     User,
     Role,
-    Note,
     Variable
 }

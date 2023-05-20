@@ -23,7 +23,8 @@ const expresionesRegulares = {
 	password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[#$@!%&*?+._-])(?!\s)[a-zA-Z\d#$@!%&*?+._-]{8,16}$/, // 4 a 12 digitos.
 	correo: /^[a-z0-9._-]+@[a-z0-9-]+\.[a-z]+$/,
     url: /^(https:\/\/|http:\/\/)?(www+\.)?([a-z0-9-]+\.){1,}[a-z]+$/,
-	telefono: /^\+?\d{1,3}?[ -\.\(]?\d{1,3}[\)\- \.]?\d{3,4}[ \.\-]?\d{4}$/ // 7 a 14 numeros.
+	telefono: /^\+?\d{1,3}?[ -\.\(]?\d{1,3}[\)\- \.]?\d{3,4}[ \.\-]?\d{4}$/, // 7 a 14 numeros.
+    mongoId: /^[a-z0-9]{24}$/
 };
 
 //VALIDACION DE NOMBRE
@@ -59,11 +60,21 @@ const validarTelefono = ( telefono ) => {
 
 }
 
+//VALIDACION DE ID MONGO
+const validarMongoId = ( mongoId ) => {
+
+    const validacion = expresionesRegulares.mongoId;
+
+    return validacion.test( mongoId );
+
+}
+
 //_______________________________________________________________________________________________________________
 //EXPORTACION DE MODULOS DE CONTROL
 module.exports = {
     validarNombre,
     validarCorreo,
     validarPassword,
-    validarTelefono
+    validarTelefono,
+    validarMongoId
 }

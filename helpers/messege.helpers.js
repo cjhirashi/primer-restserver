@@ -347,6 +347,27 @@ const msgObjectExist = () => {
     );
 }
 
+const msgErrorServidor = (eng, esp) => {
+    const code = 500;
+
+    if ( eng && esp) {
+        return messageStructure(
+            code,
+            null,
+            null,
+            eng,
+            esp,
+        );
+    }
+    return messageStructure(
+        code,
+        null,
+        null,
+        'Something went wrong, server error...',
+        'Algo salió mal, error del servidor...',
+    );
+}
+
 //_______________________________________________________________________________________________________________
 //EXPORTACION DE MODULOS DE CONTROL
 module.exports = {
@@ -360,5 +381,6 @@ module.exports = {
     msgObjectUpdate,
     msgObjectCreate,
     msgObjectDeleted,
-    msgObjectExist
+    msgObjectExist,
+    msgErrorServidor
 }

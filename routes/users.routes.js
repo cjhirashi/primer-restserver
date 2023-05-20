@@ -15,7 +15,7 @@ const {
     hasRole,
     isValidPassword
 } = require('../middlewares');
-const Role = require('../models/role.model');
+const { Role } = require('../models');
 const {
     isValidRole,
     existEmail,
