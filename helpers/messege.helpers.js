@@ -347,6 +347,24 @@ const msgObjectExist = () => {
     );
 }
 
+const msgObjectNotFound = (objectNameEng, objectNameEsp) => {
+    return messageStructure(
+        404,
+        null,
+        null,
+        `Object [ ${objectNameEng} ] not found...`,
+        `El objeto [ ${objectNameEsp} ] no encontrado...`,
+    );
+}
+
+const msgAddObject = (objectNameEng, objectNameEsp) => {
+    return messageStructure(
+        201,
+        `Object [ ${objectNameEng} ] added...`,
+        `Objeto [ ${objectNameEsp} ] agregado...`,
+    );
+}
+
 const msgErrorServidor = (eng, esp) => {
     const code = 500;
 
@@ -382,5 +400,7 @@ module.exports = {
     msgObjectCreate,
     msgObjectDeleted,
     msgObjectExist,
+    msgObjectNotFound,
+    msgAddObject,
     msgErrorServidor
 }

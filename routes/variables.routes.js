@@ -15,7 +15,9 @@ const {
 const { 
     listVariables, 
     createVariable, 
-    updateVariable
+    updateVariable,
+    createNoteVariable,
+    updateNoteVariable
 } = require('../controllers/variables.controller');
 
 
@@ -40,6 +42,21 @@ router.put('/:id', [
     validateJWT,
     isMongoId
 ], updateVariable);
+
+//CREAR NOTA DE REGISTRO POR ID
+router.post('/:idp/note',[
+    validateJWT,
+], createNoteVariable);
+
+//ACTUALIZAR NOTAS DE REGISTRO POR ID
+router.put('/:idp/note/:idc',[
+    validateJWT,
+], updateNoteVariable);
+
+//ELIMINAR NOTA DE REGISTRO POR ID
+router.delete('/:idp/note/:idc',[
+
+], );
 
 //DESACTIVAR REGISTRO POR ID
 router.delete('/:id', [

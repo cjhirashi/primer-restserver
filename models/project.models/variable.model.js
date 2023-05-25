@@ -1,7 +1,18 @@
+//===============================================================================================================
+//TITLE: VARIABLES CONTROLLER
+//DESCRIPTION: CONTROLADOR DE GESTOR DE DATOS DE ROL DE USUARIOS
+//AUTH: Carlos Jimenez @cjhirashi
+//      Marcelo Piña @mpina
+//===============================================================================================================
+
+//LIBRERIAS GLOBALES
 const { Schema, model } = require('mongoose');
+
+//LIBRERIAS LOCALES
 const { NoteSchema } = require('../global/note.model');
 
-//Esquema de registro
+//_______________________________________________________________________________________________________________
+//ESQUEMA DE REGISTRO
 const VariableSchema = Schema({
     name: {
         type: String,
@@ -10,7 +21,6 @@ const VariableSchema = Schema({
     },
     description: {
         type: String,
-        
     },
     variableType: {
         type: String,
@@ -33,11 +43,10 @@ const VariableSchema = Schema({
         },
         min: {
             type: Number
-        }
-    },
-    units: {
-        type: String,
-        default: '---'
+        },
+        units: {
+            type: String,
+        },
     },
     multistate: {
         0: {type: String, uppercase: true},
@@ -73,6 +82,8 @@ const VariableSchema = Schema({
     timestamps: true
 });
 
+//_______________________________________________________________________________________________________________
+//TRANSFORMACION DE RESPUESTA DE REGISTRO
 VariableSchema.methods.toJSON = function() {
     const { __v, _id, ...variable } = this.toObject();
     variable.uid = _id;
@@ -81,7 +92,8 @@ VariableSchema.methods.toJSON = function() {
 
 const Variable = model( 'Variable', VariableSchema );
 
-//Exportación de módulos
+//_______________________________________________________________________________________________________________
+//EXPORTACION DE MODULOS DE CONTROL
 module.exports = {
     Variable,
     VariableSchema

@@ -11,7 +11,7 @@ const jwt = require('jsonwebtoken');
 //LIBRERIAS LOCALES
 const User = require('../models/global/user.model');
 const { messageStructure } = require('../helpers/object.helpers');
-const { messageError } = require('../helpers/messege.helpers');
+const { messageError, msgErrorServidor } = require('../helpers/messege.helpers');
 
 //_______________________________________________________________________________________________________________
 //VALIDACION DE JSON WEB TOKEN
@@ -73,11 +73,7 @@ const validateJWT = async( req = request, res, next ) => {
 
     } catch (error) {
         //ERROR DE VALIDACIÓN DE TOKEN
-        response = messageError(
-            401,
-            'Token invalid...',
-            'Token no válido...',
-        );
+        response = msgErrorServidor();
         res.status(response.status).json({
             response
         })
