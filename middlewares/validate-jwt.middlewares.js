@@ -34,7 +34,6 @@ const validateJWT = async( req = request, res, next ) => {
     }
 
     try {
-
         //CONSULTA DE ID DE USUARIO EN TOKEN
         const { uid } = jwt.verify( token, process.env.SECRETORPRIVATEKEY );
 
@@ -73,10 +72,11 @@ const validateJWT = async( req = request, res, next ) => {
 
     } catch (error) {
         //ERROR DE VALIDACIÓN DE TOKEN
-        response = msgErrorServidor();
-        res.status(response.status).json({
-            response
-        })
+        response = msgErrorServidor(
+            'Token is wrong...',
+            'El token es invalido...'
+        );
+        res.status(response.status).json(response);
     }
 }
 

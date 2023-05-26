@@ -12,7 +12,7 @@ const bcryptjs = require('bcryptjs');
 const { User } = require('../models');
 const { generateJWT } = require('../helpers/generate-jwt');
 const { googleVerify } = require('../helpers/google-verify');
-const { messageError, messageObject, messageToken, msgObjectCreate } = require('../helpers/messege.helpers');
+const { messageError, messageToken, msgObjectCreate } = require('../helpers/messege.helpers');
 
 
 //_______________________________________________________________________________________________________________
@@ -82,7 +82,6 @@ const logIn = async( req, res = response ) => {
 
         //RESPUESTA DE ACCESO EXITOSO
         const response = messageToken(
-            202,
             'Successful login...',
             'Acceso exitoso...',
             token

@@ -7,7 +7,7 @@
 
 //_______________________________________________________________________________________________________________
 //ESTRUCTURA DE MENSAJES
-const messageStructure = ( status, msEn, msEs, erEn, erEs, object, objects, total=0, from=1, limit=1, token )=>{
+const messageStructure = ( status, msEn, msEs, erEn, erEs, object, objects, total=0, from=1, limit=1, token, errorsys )=>{
     let response = {};
 
     if ( status ) {
@@ -48,6 +48,10 @@ const messageStructure = ( status, msEn, msEs, erEn, erEs, object, objects, tota
 
     if ( token ) {
         response.tk = token;
+    }
+
+    if ( errorsys ) {
+        response.errorsys = errorsys;
     }
     return response;
 }
@@ -102,9 +106,9 @@ const messageObjects = ( code, english, spanish, objects, total, from, limit ) =
 }
 
 //RESPUESTA TOKEN
-const messageToken = ( code, english, spanish, token) => {
+const messageToken = ( english, spanish, token) => {
     return messageStructure(
-        code,
+        202,
         english,
         spanish,
         null,
@@ -318,7 +322,7 @@ const msgObjectDeleted = ( object ) => {
         
     }else{
 
-        vCode = 201;
+        vCode = 200;
         vEnglish = 'Object deleted...';
         vSpanish = 'Objeto eliminado...';
         vEnglishErr = null;
@@ -347,34 +351,50 @@ const msgObjectExist = () => {
     );
 }
 
-const msgObjectNotFound = (objectNameEng, objectNameEsp) => {
+const msgObjectNotFound = (english, spanish) => {
     return messageStructure(
         404,
         null,
         null,
-        `Object [ ${objectNameEng} ] not found...`,
-        `El objeto [ ${objectNameEsp} ] no encontrado...`,
+        `Object [ ${english} ] not found...`,
+        `El objeto [ ${spanish} ] no encontrado...`,
     );
 }
 
-const msgAddObject = (objectNameEng, objectNameEsp) => {
+const msgAddObject = (english, spanish) => {
     return messageStructure(
         201,
-        `Object [ ${objectNameEng} ] added...`,
-        `Objeto [ ${objectNameEsp} ] agregado...`,
+        `Object [ ${english} ] added...`,
+        `Objeto [ ${spanish} ] agregado...`,
     );
 }
 
-const msgErrorServidor = (eng, esp) => {
+const msgUpdateObject = (english, spanish) => {
+    return messageStructure(
+        200,
+        `Object [ ${english} ] updated...`,
+        `Objeto [ ${spanish} ] actualizado...`,
+    );
+}
+
+const msgDeleteObject = (english, spanish) => {
+    return messageStructure(
+        200,
+        `Object [ ${english} ] deleted...`,
+        `Objeto [ ${spanish} ] eliminado...`,
+    );
+}
+
+const msgErrorServidor = (english, spanish) => {
     const code = 500;
 
-    if ( eng && esp) {
+    if ( english && spanish) {
         return messageStructure(
             code,
             null,
             null,
-            eng,
-            esp,
+            english,
+            spanish,
         );
     }
     return messageStructure(
@@ -384,6 +404,26 @@ const msgErrorServidor = (eng, esp) => {
         'Something went wrong, server error...',
         'Algo salió mal, error del servidor...',
     );
+}
+
+const msgErrServ = (error) => {
+    const code = 500;
+
+    return messageStructure(
+        code,
+        null,
+        null,
+        'Something went wrong, server error...',
+        'Algo salió mal, error del servidor...',
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        error
+    );
+    //status, msEn, msEs, erEn, erEs, object, objects, total=0, from=1, limit=1, token, errorsys
 }
 
 //_______________________________________________________________________________________________________________
@@ -402,5 +442,8 @@ module.exports = {
     msgObjectExist,
     msgObjectNotFound,
     msgAddObject,
-    msgErrorServidor
+    msgUpdateObject,
+    msgDeleteObject,
+    msgErrorServidor,
+    msgErrServ
 }

@@ -17,7 +17,11 @@ const {
     createVariable, 
     updateVariable,
     createNoteVariable,
-    updateNoteVariable
+    updateNoteVariable,
+    deleteNoteVariable,
+    findVariable,
+    inactiveVariable,
+    deleteVariable
 } = require('../controllers/variables.controller');
 
 
@@ -37,6 +41,11 @@ router.post('/', [
     validateJWT
 ], createVariable);
 
+//CONSULTAR REGISTRO POR ID
+router.get('/:id', [
+    validateJWT
+], findVariable);
+
 //ACTUALIZAR REGISTRO POR ID
 router.put('/:id', [
     validateJWT,
@@ -55,20 +64,20 @@ router.put('/:idp/note/:idc',[
 
 //ELIMINAR NOTA DE REGISTRO POR ID
 router.delete('/:idp/note/:idc',[
-
-], );
+    validateJWT,
+], deleteNoteVariable);
 
 //DESACTIVAR REGISTRO POR ID
 router.delete('/:id', [
     validateJWT,
     isMongoId
-], updateVariable);
+], inactiveVariable);
 
 //ELIMINAR REGISTRO POR ID
 router.delete('/:id/delete', [
     validateJWT,
     isMongoId
-], updateVariable);
+], deleteVariable);
 
 //_______________________________________________________________________________________________________________
 //EXPORTACION DE MODULOS DE CONTROL
