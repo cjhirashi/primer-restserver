@@ -163,27 +163,21 @@ const createVariableElement = async (req, res) => {
     const user = req.user;
     const { idp } = req.params;
     let { name, description, variableType, dataType, signal, range, units, multistate } = req.body;
-    console.log(name.toUpperCase());
+
     try {
 
-        console.log('Paso 1');
         //OBTENER REGISTRO POR ID
         const element = await Element.findById( idp );
-        
-        console.log('Paso 2');
+
         //CONFIRMACION EXISTENCIA DE REGISTRO
         if ( !element ) {
             response = msgObjectNotFound('element','elemento');
             return res.status(response.status).json(response);
         }
-        
-        console.log('Paso 3');
+
         //VERIFICACION SI REGISTRO EXISTE
         const variables = element.variables;
 
-        console.log('Paso 4');
-        //console.log(variables);
-        //let variableExist = variables.indexOf({name});
         let variableExist = false;
         variables.forEach((element) => {
             console.log(element.name);
@@ -191,24 +185,18 @@ const createVariableElement = async (req, res) => {
                 variableExist = true;
             }
         })
-        console.log('Paso 5');
-        console.log(variableExist);
 
-        console.log('Paso 6');
         if ( variableExist ) {
             response = msgObjectExist();
             return res.status(response.status).json(response);
         }
 
-        console.log('Paso 7');
         //AGREGAR NOTA A REGISTRO
         element.variables.push({name, description, variableType, dataType, signal, range, units, multistate, user: user.email});
-        
-        console.log('Paso 7');
+
         //GUARDAR REGISTRO EN BD
         element.save();
 
-        console.log('Paso 8');
         //MENSAJE DE RESPUESTA
         response = msgAddObject('variable', 'variable');
         return res.status(response.status).json(response);
@@ -224,12 +212,110 @@ const createVariableElement = async (req, res) => {
 
 //ACTUALIZAR VARIABLE
 const updateVariableElement = async (req, res) => {
-    
+    let response;
+
+    //CONSULTA DE PARAMETROS
+    const user = req.user;
+    const { idp, idc } = req.params;
+    let { description, variableType, dataType, signal, range, units, multistate } = req.body;
+
+    try {
+
+        //OBTENER REGISTRO POR ID
+        const element = await Element.findById( idp );
+
+        //CONFIRMACION EXISTENCIA DE REGISTRO
+        if ( !element ) {
+            response = msgObjectNotFound('element','elemento');
+            return res.status(response.status).json(response);
+        }
+
+        //ACTUALIZAR NOTA
+        console.log('Paso 1');
+        let variableExist = false;
+        element.variables.forEach((element) => {
+            if ( element._id == idc ) {
+                element.description = description;
+                element.variableType = variableType;
+                element.dataType = dataType;
+                element.signal = signal;
+                element.range = range;
+                element.units = units;
+                element.multistate = multistate;
+                element.user = user.email;
+                console.log(element);
+                variableExist = true;
+            }
+        });
+
+        if ( variableExist == false ) {
+            response = msgObjectNotFound('variable','variable');
+            return res.status(response.status).json(response);
+        }
+
+        //GUARDAR REGISTRO EN BD
+        element.save();
+        
+        //MENSAJE DE RESPUESTA
+        response = msgUpdateObject('variable','variable');
+        return res.status(response.status).json(response);
+
+    } catch (error) {
+
+        //ERROR DE SERVIDOR
+        response = msgErrServ(error);
+        return res.status(response.status).json(response);
+
+    }
 }
 
 //CREAR VARIABLE
 const deleteVariableElement = async (req, res) => {
-    
+    let response;
+
+    //CONSULTA DE PARAMETROS
+    const { idp, idc } = req.params;
+
+    try {
+
+        //OBTENER REGISTRO POR ID
+        const element = await Element.findById( idp );
+
+        //CONFIRMACION EXISTENCIA DE REGISTRO
+        if ( !element ) {
+            response = msgObjectNotFound('element','elemento');
+            return res.status(response.status).json(response);
+        }
+
+        //ELIMINAR NOTA DE REGISTRO
+        let index = -1;
+        element.variables.forEach((element, i) => {
+            if ( element._id == idc ) {
+                index = i;
+            }
+        });
+
+        if ( index >= 0 ) {
+            element.variables.splice( index, 1 );
+        }else{
+            response = msgObjectNotFound('variable', 'variable');
+            return res.status(response.status).json(response);
+        }
+
+        //GUARDAR REGISTRO EN BD
+        element.save();
+
+        //MENSAJE DE RESPUESTA
+        response = msgDeleteObject('variable', 'variable');
+        return res.status(response.status).json(response);
+
+    } catch (error) {
+
+        //ERROR DE SERVIDOR
+        response = msgErrServ(error);
+        return res.status(response.status).json(response);
+
+    }
 }
 
 //CREAR NOTA
