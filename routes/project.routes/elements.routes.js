@@ -1,5 +1,5 @@
 //===============================================================================================================
-//TITLE: VARIABLES ROUTER
+//TITLE: ELEMENTS ROUTER
 //DESCRIPTION: RUTAS DE CONTROLES DE ACCESO PARA ROLES DE USUARIOS
 //AUTH: Carlos Jimenez @cjhirashi
 //===============================================================================================================
@@ -11,18 +11,21 @@ const { Router } = require('express');
 const { 
     validateJWT, 
     isMongoId 
-} = require('../middlewares');
+} = require('../../middlewares');
 const { 
-    listVariables, 
-    createVariable, 
-    updateVariable,
-    createNoteVariable,
-    updateNoteVariable,
-    deleteNoteVariable,
-    findVariable,
-    inactiveVariable,
-    deleteVariable
-} = require('../controllers/variables.controller');
+    listElements, 
+    createElement, 
+    findElement,
+    updateElement,
+    createVariableElement,
+    updateVariableElement,
+    deleteVariableElement,
+    createNoteElement,
+    updateNoteElement,
+    deleteNoteElement,
+    inactiveElement,
+    deleteElement
+} = require('../../controllers/project.controllers/elements.controller');
 
 
 //_______________________________________________________________________________________________________________
@@ -34,50 +37,66 @@ const router = Router();
 //CONSULTA DE REGISTROS
 router.get('/', [
     validateJWT
-], listVariables);
+], listElements);
 
 //CREACION DE REGISTRO
 router.post('/', [
     validateJWT
-], createVariable);
+], createElement);
 
 //CONSULTAR REGISTRO POR ID
 router.get('/:id', [
-    validateJWT
-], findVariable);
+    validateJWT,
+    isMongoId
+], findElement);
 
 //ACTUALIZAR REGISTRO POR ID
 router.put('/:id', [
     validateJWT,
     isMongoId
-], updateVariable);
+], updateElement);
+
+//CREAR VARIABLE DE REGISTRO POR ID
+router.post('/:idp/variables',[
+    validateJWT,
+], createVariableElement);
+
+//ACTUALIZAR VARIABLE DE REGISTRO POR ID
+router.put('/:idp/variables/:idc',[
+    validateJWT,
+], updateVariableElement);
+
+//ELIMINAR VARIABLE DE REGISTRO POR ID
+router.delete('/:idp/variables/:idc',[
+    validateJWT,
+], deleteVariableElement);
 
 //CREAR NOTA DE REGISTRO POR ID
 router.post('/:idp/note',[
     validateJWT,
-], createNoteVariable);
+], createNoteElement);
 
 //ACTUALIZAR NOTAS DE REGISTRO POR ID
 router.put('/:idp/note/:idc',[
     validateJWT,
-], updateNoteVariable);
+], updateNoteElement);
 
 //ELIMINAR NOTA DE REGISTRO POR ID
 router.delete('/:idp/note/:idc',[
     validateJWT,
-], deleteNoteVariable);
+], deleteNoteElement);
 
 //DESACTIVAR REGISTRO POR ID
 router.delete('/:id', [
     validateJWT,
     isMongoId
-], inactiveVariable);
+], inactiveElement);
 
 //ELIMINAR REGISTRO POR ID
 router.delete('/:id/delete', [
     validateJWT,
     isMongoId
-], deleteVariable);
+], deleteElement);
 
 //_______________________________________________________________________________________________________________
 //EXPORTACION DE MODULOS DE CONTROL

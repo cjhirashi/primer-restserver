@@ -6,10 +6,12 @@ const Role = require('./global/role.model');
 
 //IMPORTACIONES: CARPETA PROYECTOS
 const { Variable } = require('./project.models/variable.model');
+const { Element } = require('./project.models/element.model');
 
 
 module.exports = {
     User,
     Role,
-    Variable
+    Variable,
+    Element
 }

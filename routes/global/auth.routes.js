@@ -9,7 +9,11 @@ const { Router } = require('express');
 const { check } = require('express-validator');
 
 //LIBRERIAS LOCALES
-const { logIn, logOn, googleSignIn } = require('../controllers/auth.controller');
+const { 
+    logIn, 
+    logOn, 
+    googleSignIn 
+} = require('../../controllers/global/auth.controller');
 const { 
     isValidName, 
     isValidPassword, 
@@ -17,7 +21,7 @@ const {
     isNotPassword, 
     isNotGoogleToken, 
     isPasswordMatch
-} = require('../middlewares/validate-fiels.middlewares');
+} = require('../../middlewares/validate-fiels.middlewares');
 
 //_______________________________________________________________________________________________________________
 //ROUTER

@@ -8,10 +8,9 @@
 //const { request, response } = require('express');
 
 //LIBRERIAS LOCALES
-const { Variable } = require('../models');
-const { objectFrom, objectLimit } = require('../helpers/object.helpers');
+const { Variable } = require('../../models');
+const { objectFrom, objectLimit } = require('../../helpers/object.helpers');
 const { 
-    msgErrorServidor, 
     msgObjects, 
     msgObject, 
     msgObjectCreate, 
@@ -23,7 +22,7 @@ const {
     msgDeleteObject,
     msgErrServ,
     msgObjectDeleted
-} = require('../helpers/messege.helpers');
+} = require('../../helpers/messege.helpers');
 
 //_______________________________________________________________________________________________________________
 //ENLISTAR LOS REGISTROS
@@ -76,7 +75,7 @@ const createVariable = async(req, res) => {
 
     try {
 
-        //VERIFICACION SI VARIABLE EXISTE
+        //VERIFICACION SI REGISTRO EXISTE
         const variableExist = await Variable.findOne({name});
     
         if ( variableExist ) {
@@ -84,10 +83,10 @@ const createVariable = async(req, res) => {
             return res.status(response.status).json(response);
         }
     
-        //CREACION DE VARIABLE NUEVA
+        //CREACION DE REGISTRO NUEVO
         const variable = new Variable({ name, description, variableType, dataType, signal, units, range, multistate, user: user.email });
     
-        //CARGA DE VARIABLE A BASE DE DATOS
+        //CARGA DE REGISTRO A BASE DE DATOS
         await variable.save();
     
         //MENSAJE DE VALIDACION
@@ -99,6 +98,7 @@ const createVariable = async(req, res) => {
         //ERROR DE SERVIDOR
         response = msgErrServ(error);
         return res.status(response.status).json(response);
+
     }
 
 }
@@ -108,7 +108,6 @@ const findVariable = async(req, res) => {
     let response;
 
     //CONSULTA DE PARAMETROS
-    const user = req.user;
     const { id } = req.params;
 
     try {
@@ -130,7 +129,7 @@ const findVariable = async(req, res) => {
 
 }
 
-//OBTENER VARIABLE
+//ACTUALIZAR REGISTRO
 const updateVariable = async (req, res) => {
     let response;
 
@@ -185,7 +184,7 @@ const createNoteVariable = async (req, res) => {
         variable.save();
 
         //MENSAJE DE RESPUESTA
-        response = msgAddObject('Note', 'Nota');
+        response = msgAddObject('note', 'nota');
         return res.status(response.status).json(response);
 
     } catch (error) {
@@ -290,7 +289,7 @@ const deleteNoteVariable = async (req, res) => {
     }
 }
 
-//DESACTIVAR VARIABLE
+//DESACTIVAR REGISTRO
 const inactiveVariable = async (req, res) => {
     let response;
 
@@ -313,10 +312,9 @@ const inactiveVariable = async (req, res) => {
         return res.status(response.status).json(response);
 
     }
-
 }
 
-//DESACTIVAR VARIABLE
+//ELIMINAR REGISTRO
 const deleteVariable = async (req, res) => {
     let response;
 

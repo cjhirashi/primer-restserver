@@ -9,16 +9,13 @@ const { Router } = require('express');
 
 //LIBRERIAS LOCALES
 const { 
-    isValidName, 
-} = require('../middlewares/validate-fiels.middlewares');
-const { 
     listRoles, 
     createRole, 
     updateRole, 
     inactiveRole, 
     deleteRole 
-} = require('../controllers/roles.controller');
-const { validateJWT } = require('../middlewares');
+} = require('../../controllers/global/roles.controller');
+const { validateJWT } = require('../../middlewares');
 
 //_______________________________________________________________________________________________________________
 //ROUTER

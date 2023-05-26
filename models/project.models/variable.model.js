@@ -1,5 +1,5 @@
 //===============================================================================================================
-//TITLE: VARIABLES CONTROLLER
+//TITLE: VARIABLES MODEL
 //DESCRIPTION: CONTROLADOR DE GESTOR DE DATOS DE ROL DE USUARIOS
 //AUTH: Carlos Jimenez @cjhirashi
 //      Marcelo Piña @mpina

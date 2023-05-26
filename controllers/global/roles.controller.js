@@ -8,12 +8,17 @@
 const { response } = require('express');
 
 //LIBRERIAS LOCALES
-const { Role } = require('../models/index');
-const { messageError, messageObject, messageToken, messageObjects, messageSuccess, msgObjects, msgObjectUpdate } = require('../helpers/messege.helpers');
+const { Role } = require('../../models/index');
+const { 
+    messageError, 
+    messageSuccess, 
+    msgObjects, 
+    msgObjectUpdate 
+} = require('../../helpers/messege.helpers');
 const {
     objectFrom,
     objectLimit
-} = require('../helpers/object.helpers');
+} = require('../../helpers/object.helpers');
 
 
 //_______________________________________________________________________________________________________________

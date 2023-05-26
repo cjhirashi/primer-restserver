@@ -14,13 +14,13 @@ const {
     validateJWT,
     hasRole,
     isValidPassword
-} = require('../middlewares');
-const { Role } = require('../models');
+} = require('../../middlewares');
+const { Role } = require('../../models');
 const {
     isValidRole,
     existEmail,
     existUserById
-} = require('../helpers/custom-validators.helpers');
+} = require('../../helpers/custom-validators.helpers');
 const {
     listUsers,
     userGet,
@@ -28,7 +28,7 @@ const {
     createUser,
     inactiveUser,
     deleteUser
-} = require('../controllers/users.controller');
+} = require('../../controllers/global/users.controller');
 
 //_______________________________________________________________________________________________________________
 //ROUTER

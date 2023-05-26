@@ -9,10 +9,10 @@ const { response } = require('express');
 const bcryptjs = require('bcryptjs');
 
 //LIBRERIAS LOCALES
-const { User } = require('../models');
-const { generateJWT } = require('../helpers/generate-jwt');
-const { googleVerify } = require('../helpers/google-verify');
-const { messageError, messageToken, msgObjectCreate } = require('../helpers/messege.helpers');
+const { User } = require('../../models');
+const { generateJWT } = require('../../helpers/generate-jwt');
+const { googleVerify } = require('../../helpers/google-verify');
+const { messageError, messageToken, msgObjectCreate } = require('../../helpers/messege.helpers');
 
 
 //_______________________________________________________________________________________________________________

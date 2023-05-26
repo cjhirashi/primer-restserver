@@ -9,11 +9,11 @@ const { response, request  } = require('express');
 const bcryptjs = require('bcryptjs');
 
 //LIBRERIAS LOCALES
-const { User } = require('../models');
+const { User } = require('../../models');
 const {
     objectFrom,
     objectLimit,
-} = require('../helpers/object.helpers');
+} = require('../../helpers/object.helpers');
 const { 
     msgObjects, 
     msgObject, 
@@ -21,7 +21,7 @@ const {
     msgObjectCreate,
     msgObjectDeleted,
     msgErrorServidor
-} = require('../helpers/messege.helpers');
+} = require('../../helpers/messege.helpers');
 
 //_______________________________________________________________________________________________________________
 //ENLISTAR LOS REGISTROS
